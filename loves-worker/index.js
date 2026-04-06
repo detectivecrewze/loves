@@ -173,7 +173,7 @@ export default {
           success: true,
           message: "Published!",
           id,
-          giftUrl: `${DOMAIN}/loves/${id}`,
+          giftUrl: `${DOMAIN}/${id}`,
           studioUrl: `${DOMAIN}/studio/${id}`
         });
       } catch (error) {
@@ -331,7 +331,7 @@ ATURAN WAJIB:
         await env.LOVES_KV.put(customId, JSON.stringify(initialConfig));
 
         const studioUrl = `${DOMAIN}/studio/${customId}${studioPassword ? `/${studioPassword}` : ''}`;
-        const giftUrl = `${DOMAIN}/loves/${customId}`;
+        const giftUrl = `${DOMAIN}/${customId}`;
 
         return json({
           success: true,
