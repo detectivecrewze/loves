@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Link — Loves Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #fcfaf7; }
+    .shake { animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <!-- LOGIN GATE -->
+  <div id="login-gate" class="w-full max-w-sm">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-light tracking-tight text-gray-900 mb-2">Generator Link</h1>
+      <p class="text-[9px] uppercase tracking-[0.4em] text-gray-400">Loves Edition — Admin Only</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <input id="gen-password" type="password" placeholder="Password Admin"
+        class="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-gray-800 text-center transition-colors bg-transparent mb-6 placeholder-gray-300">
+      <button id="btn-login" class="w-full bg-gray-900 text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-black transition-colors">
+        Masuk
+      </button>
+      <p id="login-error" class="hidden text-[9px] text-rose-500 text-center mt-3 font-semibold">Password salah</p>
+    </div>
+  </div>
+
+  <!-- GENERATOR PANEL (hidden initially) -->
+  <div id="generator-panel" class="hidden w-full max-w-md fade-in">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-light tracking-tight text-gray-900 mb-2">Generator Link</h1>
+      <p class="text-[9px] uppercase tracking-[0.4em] text-gray-400">Loves Edition — Buat Link Baru</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5">
+
+      <!-- ID / Slug -->
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">ID / Slug Kado</label>
+        <input id="gen-id" type="text" placeholder="e.g. cella-2026 atau bisa auto-generate"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+        <p class="text-[8px] text-gray-400 mt-1.5">Huruf kecil, angka, strip saja. Min. 3 karakter.</p>
+      </div>
+
+      <!-- Studio Password (opsional) -->
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">Password Studio <span class="text-gray-300 font-normal">(opsional)</span></label>
+        <input id="gen-studio-pass" type="text" placeholder="Password untuk mengunci Studio Editor"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+        <p class="text-[8px] text-gray-400 mt-1.5">Kosongkan kalau tidak perlu password editor.</p>
+      </div>
+
+      <!-- Auto-generate ID -->
+      <div class="flex items-center gap-3 pt-1">
+        <input type="checkbox" id="auto-gen-id" class="w-3.5 h-3.5 accent-gray-800">
+        <label for="auto-gen-id" class="text-[10px] text-gray-600 cursor-pointer">Auto-generate ID unik</label>
+      </div>
+
+      <!-- Submit button -->
+      <button id="btn-generate" class="w-full bg-[#d4a373] text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-[#c4956a] transition-colors shadow-sm mt-2">
+        <span class="btn-text">Buat Link Sekarang →</span>
+      </button>
+
+      <p id="gen-error" class="hidden text-[9px] text-rose-500 text-center font-semibold"></p>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result-card" class="hidden mt-6 bg-white rounded-2xl shadow-sm border border-emerald-100 p-8 space-y-5 fade-in">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+        <p class="text-[9px] uppercase tracking-widest text-emerald-600 font-semibold">Berhasil Dibuat!</p>
+      </div>
+
+      <div>
+        <p class="text-[8px] uppercase tracking-widest text-gray-400 mb-2 font-semibold">ID Kado</p>
+        <p id="result-id" class="text-sm font-mono text-gray-800 bg-gray-50 rounded-lg px-3 py-2"></p>
+      </div>
+
+      <div>
+        <p class="text-[8px] uppercase tracking-widest text-gray-400 mb-2 font-semibold">Link Studio Editor (untuk Customer)</p>
+        <div class="flex gap-2">
+          <p id="result-studio" class="flex-1 text-[10px] font-mono text-[#d4a373] bg-gray-50 rounded-lg px-3 py-2 break-all"></p>
+          <button onclick="_copyText('result-studio', this)" class="text-[8px] uppercase tracking-wider font-semibold text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap">Salin</button>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-[8px] uppercase tracking-widest text-gray-400 mb-2 font-semibold">Link Kado (untuk Penerima)</p>
+        <div class="flex gap-2">
+          <p id="result-gift" class="flex-1 text-[10px] font-mono text-gray-800 bg-gray-50 rounded-lg px-3 py-2 break-all"></p>
+          <button onclick="_copyText('result-gift', this)" class="text-[8px] uppercase tracking-wider font-semibold text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap">Salin</button>
+        </div>
+      </div>
+
+      <button id="btn-generate-another" class="w-full border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-semibold uppercase tracking-widest hover:border-gray-800 hover:text-gray-800 transition-colors">
+        + Buat Link Lain
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-[9px] uppercase tracking-widest font-semibold shadow-lg z-50"></div>
+
+  <script>
+    const WORKER_URL = 'https://loves-edition.aldoramadhan16.workers.dev';
+    let _authToken = null;
+    let _toastTimer = null;
+
+    // ── Login ─────────────────────────────────────────────────────────
+    document.getElementById('gen-password').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const pass = document.getElementById('gen-password').value;
+      const btn = document.getElementById('btn-login');
+      const err = document.getElementById('login-error');
+
+      btn.textContent = 'Memverifikasi...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/generator-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          _authToken = pass;
+          document.getElementById('login-gate').style.display = 'none';
+          document.getElementById('generator-panel').classList.remove('hidden');
+        } else {
+          err.classList.remove('hidden');
+          document.getElementById('gen-password').classList.add('shake');
+          setTimeout(() => document.getElementById('gen-password').classList.remove('shake'), 500);
+        }
+      } catch (e) {
+        err.textContent = 'Gagal terhubung ke server.';
+        err.classList.remove('hidden');
+      }
+
+      btn.textContent = 'Masuk';
+      btn.disabled = false;
+    });
+
+    // ── Auto-generate ID toggle ──────────────────────────────────────
+    document.getElementById('auto-gen-id').addEventListener('change', function() {
+      const idInput = document.getElementById('gen-id');
+      if (this.checked) {
+        idInput.value = 'auto-' + Math.random().toString(36).substring(2, 9);
+        idInput.disabled = true;
+      } else {
+        idInput.value = '';
+        idInput.disabled = false;
+      }
+    });
+
+    // ── Generate Link ────────────────────────────────────────────────
+    document.getElementById('btn-generate').addEventListener('click', async () => {
+      const idInput = document.getElementById('gen-id');
+      const passInput = document.getElementById('gen-studio-pass');
+      const btn = document.getElementById('btn-generate');
+      const btnText = btn.querySelector('.btn-text');
+      const errEl = document.getElementById('gen-error');
+
+      const id = idInput.value.trim() || ('auto-' + Math.random().toString(36).substring(2, 9));
+      const studioPassword = passInput.value.trim() || null;
+
+      errEl.classList.add('hidden');
+      btnText.textContent = 'Membuat...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/generate-link`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${_authToken}`
+          },
+          body: JSON.stringify({ id, studioPassword })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('result-id').textContent = data.id;
+          document.getElementById('result-studio').textContent = data.studioUrl;
+          document.getElementById('result-gift').textContent = data.giftUrl;
+          document.getElementById('result-card').classList.remove('hidden');
+          document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          errEl.textContent = data.error || 'Gagal membuat link.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Gagal terhubung ke server.';
+        errEl.classList.remove('hidden');
+      }
+
+      btnText.textContent = 'Buat Link Sekarang →';
+      btn.disabled = false;
+    });
+
+    // ── Generate Another ─────────────────────────────────────────────
+    document.getElementById('btn-generate-another').addEventListener('click', () => {
+      document.getElementById('result-card').classList.add('hidden');
+      document.getElementById('gen-id').value = '';
+      document.getElementById('gen-studio-pass').value = '';
+      document.getElementById('auto-gen-id').checked = false;
+      document.getElementById('gen-id').disabled = false;
+    });
+
+    // ── Copy Helper ──────────────────────────────────────────────────
+    function _copyText(elId, btn) {
+      const text = document.getElementById(elId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Tersalin!';
+        setTimeout(() => btn.textContent = orig, 2000);
+        _showToast('Link tersalin ke clipboard!');
+      });
+    }
+
+    function _showToast(msg) {
+      const t = document.getElementById('toast');
+      if (_toastTimer) clearTimeout(_toastTimer);
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      _toastTimer = setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+  </script>
+</body>
+</html>

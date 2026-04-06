@@ -1,0 +1,28 @@
+# ============================================================
+# Loves Edition — For You, Always. (Cloudflare Worker)
+# ============================================================
+# SEBELUM DEPLOY:
+# 1. Buat KV baru: wrangler kv namespace create LOVES_KV
+# 2. Masukkan ID KV baru ke [id] di bawah.
+# 3. R2 bucket PAKAI YANG SAMA dengan Arcade (arcade-edition-storage)
+# ============================================================
+
+name = "loves-edition"
+main = "index.js"
+compatibility_date = "2024-03-09"
+
+# R2 Bucket — Pakai bucket yang sama dengan Arcade
+# File disimpan dengan prefix "loves/" agar tidak bentrok
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "arcade-edition-storage"
+
+# KV Namespace — DEDICATED untuk Loves (buat baru, jangan gabung Arcade)
+[[kv_namespaces]]
+binding = "LOVES_KV"
+id = "fac81783e90849b5b706dd0f490c58ae"
+
+# Secrets (set via Cloudflare Dashboard atau wrangler secret put):
+# GENERATOR_SECRET     — Password halaman admin generator
+# ADMIN_SECRET         — Password admin panel list/delete
+# CDN_URL              — URL CDN R2 Anda (e.g. https://cdn.for-you-always.my.id)

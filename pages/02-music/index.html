@@ -1,0 +1,57 @@
+    <section id="page-music" class="spa-page">
+        <main class="music-page">
+            <header class="page-header fade-in">
+                <h1 id="section-title">Our Playlist</h1>
+                <p class="subtitle" id="music-subtitle">Curated Melodies & Memories</p>
+                <div class="divider"></div>
+            </header>
+            <div class="music-card fade-in delay-2">
+                <div class="washi-decoration washi-tape"></div>
+                <div class="cover-container">
+                    <div class="photo-corner corner-tl"></div>
+                    <div class="photo-corner corner-tr"></div>
+                    <img id="music-cover" src="" alt="Album Art" referrerpolicy="no-referrer">
+                </div>
+                <div class="track-info">
+                    <h3 id="song-title">Memuat...</h3>
+                    <p id="artist-name">—</p>
+                    <div class="visualizer" id="visualizer">
+                        <div class="v-bar"></div><div class="v-bar"></div>
+                        <div class="v-bar"></div><div class="v-bar"></div>
+                        <div class="v-bar"></div>
+                    </div>
+                </div>
+                <div class="progress-wrapper" id="progress-touch">
+                    <div id="progress-bar"></div>
+                </div>
+                <div class="controls">
+                    <button class="ctrl-btn" id="prev-btn" aria-label="Sebelumnya">
+                        <span class="material-symbols-outlined">skip_previous</span>
+                    </button>
+                    <button class="play-btn paused" id="play-btn" aria-label="Play/Pause">
+                        <span class="material-symbols-outlined play-icon-span" id="play-icon">play_arrow</span>
+                    </button>
+                    <button class="ctrl-btn" id="next-btn" aria-label="Berikutnya">
+                        <span class="material-symbols-outlined">skip_next</span>
+                    </button>
+                </div>
+                <div class="volume-wrapper">
+                    <span class="material-symbols-outlined">volume_mute</span>
+                    <input id="volume-slider" type="range" min="0" max="1" step="0.02" value="0.8">
+                    <span class="material-symbols-outlined">volume_up</span>
+                </div>
+            </div>
+            <div class="lyrics-area fade-in delay-3">
+                <p id="song-lyrics">♪ ♪ ♪</p>
+                <div class="song-dots" id="song-dots"></div>
+            </div>
+        </main>
+        <nav class="nav-bar">
+            <button class="nav-btn" data-nav="prev" style="visibility:hidden">
+                <span class="material-symbols-outlined">arrow_back_ios</span>
+            </button>
+            <button class="nav-btn" data-nav="next">
+                <span class="material-symbols-outlined">arrow_forward_ios</span>
+            </button>
+        </nav>
+    </section>

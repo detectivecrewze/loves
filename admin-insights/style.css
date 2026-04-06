@@ -1,0 +1,237 @@
+/* 
+ * style.css
+ * Arcade Admin Dashboard UI - Warm, Romantic, Handcrafted Aesthetics
+ */
+
+:root {
+    --brand-deep: #1A0A10;       /* Super dark burgundy almost black */
+    --brand-wine: #331520;       /* Deep rich dark wine */
+    --brand-rose: #733144;       /* Subdued elegant rose */
+    --brand-gold: #E3B482;       /* Soft vintage gold */
+    --brand-cream: #FCEFE4;      /* Warm creamy white */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--brand-deep);
+    color: var(--brand-cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Texture & Atmosphere
+   ────────────────────────────────────────────────────────── */
+.film-grain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.ambient-glow {
+    position: fixed;
+    width: 80vw;
+    height: 80vw;
+    max-width: 800px;
+    max-height: 800px;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: 0;
+    opacity: 0.25;
+    animation: drift 25s infinite alternate ease-in-out;
+}
+
+.glow-1 {
+    background: radial-gradient(circle, var(--brand-rose) 0%, transparent 70%);
+    top: -20%;
+    left: -10%;
+}
+
+.glow-2 {
+    background: radial-gradient(circle, var(--brand-gold) 0%, transparent 70%);
+    bottom: -30%;
+    right: -20%;
+    opacity: 0.15;
+    animation-delay: -10s;
+}
+
+@keyframes drift {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(8%, 10%) scale(1.1); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Typography
+   ────────────────────────────────────────────────────────── */
+.italic-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    text-shadow: 0 4px 20px rgba(227, 180, 130, 0.2);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Glassmorphism & Cards
+   ────────────────────────────────────────────────────────── */
+.glass-card {
+    background: rgba(51, 21, 32, 0.45); /* var(--brand-wine) with opacity */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(227, 180, 130, 0.15); /* var(--brand-gold) trace */
+    border-radius: 20px;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(227, 180, 130, 0.25);
+    background: rgba(51, 21, 32, 0.6);
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 50px -10px rgba(227, 180, 130, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-table-wrapper {
+    background: rgba(26, 10, 16, 0.7);
+    backdrop-filter: blur(24px);
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Form Elements
+   ────────────────────────────────────────────────────────── */
+.shadow-inner-custom {
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.select-premium {
+    background-color: rgba(51, 21, 32, 0.5) !important;
+    border: 1px solid rgba(227, 180, 130, 0.15) !important;
+    color: var(--brand-cream) !important;
+    font-size: 11px !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    appearance: none;
+    /* Custom Gold Chevron */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E3B482'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 1.2em !important;
+    padding-right: 2.5rem !important;
+}
+
+.select-premium:focus {
+    border-color: var(--brand-gold) !important;
+    box-shadow: 0 0 15px rgba(227, 180, 130, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+.select-premium option {
+    background-color: var(--brand-deep);
+    color: var(--brand-cream);
+    padding: 10px;
+}
+
+.custom-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(227, 180, 130, 0.3);
+    background: rgba(51, 21, 32, 0.6);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.custom-checkbox:checked {
+    background: var(--brand-gold);
+    border-color: var(--brand-gold);
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    color: var(--brand-deep);
+    font-size: 11px;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Buttons
+   ────────────────────────────────────────────────────────── */
+.btn-gold {
+    background: linear-gradient(135deg, #DFAC79, #C48E59);
+    color: var(--brand-deep);
+    box-shadow: 0 4px 15px rgba(227, 180, 130, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.btn-gold:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(227, 180, 130, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    filter: brightness(1.05);
+}
+
+.btn-gold:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Table Typography & Layout
+   ────────────────────────────────────────────────────────── */
+tbody tr {
+    border-bottom: 1px solid rgba(227, 180, 130, 0.05);
+    transition: background 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(227, 180, 130, 0.03);
+}
+
+.badge-tag {
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid;
+    display: inline-block;
+}
+
+/* Theme Badges */
+.badge-gold { background: rgba(227, 180, 130, 0.1); color: #E3B482; border-color: rgba(227, 180, 130, 0.2); }
+.badge-rose { background: rgba(229, 107, 139, 0.1); color: #E56B8B; border-color: rgba(229, 107, 139, 0.2); }
+.badge-night { background: rgba(140, 158, 204, 0.1); color: #8C9ECC; border-color: rgba(140, 158, 204, 0.2); }
+.badge-moss { background: rgba(133, 163, 135, 0.1); color: #85A387; border-color: rgba(133, 163, 135, 0.2); }
+.badge-wood { background: rgba(193, 137, 106, 0.1); color: #C1896A; border-color: rgba(193, 137, 106, 0.2); }
+
+/* Animation Utils */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(227, 180, 130, 0.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(227, 180, 130, 0.4); }

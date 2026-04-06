@@ -1,0 +1,94 @@
+    <section id="page-wrapped" class="spa-page">
+        <main class="page-wrapped-main">
+            <div id="printer-comp" class="printer-container">
+                <div id="printer-device" class="printer-device">
+                    <div class="led-group">
+                        <div id="printer-led" class="led led-green led-pulse"></div>
+                        <div class="led led-orange"></div>
+                    </div>
+                    <div class="printer-label"></div>
+                    <div class="printer-slot">
+                        <div class="printer-slot-inner"></div>
+                    </div>
+                    <div class="printer-slot-shadow"></div>
+                </div>
+
+                <div class="printer-slot-wrapper">
+                    <article class="story-card">
+                        <div class="swirl-bg"></div>
+                        <div class="card-recap-header" style="opacity: 0;">
+                        </div>
+                        <div class="card-photo-wrapper">
+                            <div class="photo-frame">
+                                <img id="wrapped-image" src="" alt="Wrapped Memory" referrerpolicy="no-referrer" />
+                            </div>
+                        </div>
+                        <div class="card-lists">
+                            <div class="list-col">
+                                <h3 id="top-places-label" class="list-label">Top Places</h3>
+                                <ol id="top-places-list" class="custom-list"></ol>
+                            </div>
+                            <div class="list-col">
+                                <h3 id="core-memories-label" class="list-label">Core Memories</h3>
+                                <ol id="core-memories-list" class="custom-list"></ol>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stats-row">
+                                <div class="stat-col">
+                                    <span id="minutes-together-label" class="stat-label">Minutes Together</span>
+                                    <span id="minutes-together" class="stat-val-minutes"></span>
+                                </div>
+                                <div class="stat-col text-right">
+                                    <span id="vibe-label" class="stat-label">Our Vibe</span>
+                                    <span id="vibe-text" class="stat-val-vibe"></span>
+                                </div>
+                            </div>
+                            <div class="barcode-wrapper">
+                                <div class="barcode-strip"></div>
+                                <div class="barcode-text">Scanned with Love</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+        
+        <nav class="nav-bar" style="display:flex; align-items:center; justify-content:space-between;">
+            <button class="nav-btn" data-nav="prev">
+                <span class="material-symbols-outlined">arrow_back_ios</span>
+            </button>
+
+            <!-- Camera Download Button — center of nav bar -->
+            <button id="wrapped-download-btn" title="Simpan sebagai gambar" style="
+                width: 2.75rem;
+                height: 2.75rem;
+                border-radius: 50%;
+                border: 1.5px solid rgba(126,12,35,0.2);
+                background: rgba(255,255,255,0.92);
+                -webkit-backdrop-filter: blur(8px);
+                backdrop-filter: blur(8px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 4px 16px rgba(126,12,35,0.12);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+                flex-shrink: 0;
+                position: relative;
+                z-index: 10;
+                pointer-events: auto;
+            ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(126,12,35,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+            </button>
+
+            <button class="nav-btn" data-nav="next">
+                <span class="material-symbols-outlined">arrow_forward_ios</span>
+            </button>
+        </nav>
+    </section>

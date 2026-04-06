@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Library Manager — For You, Always.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital@1&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --gold: #d4a373;
+            --gold-light: #f5efe6;
+            --gold-dark: #b8895a;
+            --black: #1a1a1a;
+            --gray-100: #f7f5f2;
+            --gray-200: #ede9e4;
+            --gray-300: #d9d3cb;
+            --gray-500: #9c9188;
+            --gray-700: #5c554e;
+            --white: #ffffff;
+            --red: #e53e3e;
+            --green: #38a169;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-100);
+            color: var(--black);
+            min-height: 100vh;
+            padding: 0 0 80px;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 22px;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .page-subtitle {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gray-500);
+            margin-top: 3px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-save {
+            padding: 9px 20px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-save:hover {
+            background: var(--gray-700);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-save.saving {
+            background: var(--gold-dark);
+        }
+
+        .btn-save.saved {
+            background: var(--green);
+        }
+
+        .btn-import {
+            padding: 9px 20px;
+            background: var(--white);
+            color: var(--black);
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-import:hover {
+            border-color: var(--black);
+            background: var(--gray-100);
+        }
+
+        .song-count {
+            font-size: 10px;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            padding: 4px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        /* ── Content ── */
+        .content {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--black);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            z-index: 200;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: var(--red);
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        /* ── Info Banner ── */
+        .info-banner {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--gold);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        /* ── Song Card ── */
+        .songs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .song-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .song-card:hover {
+            border-color: var(--gray-300);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .move-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        .btn-move {
+            width: 20px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--gray-300);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-move:hover:not(:disabled) {
+            background: var(--gray-100);
+            color: var(--black);
+        }
+
+        .btn-move:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .song-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--gray-500);
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        /* Cover */
+        .cover-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+        }
+
+        .cover-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cover-empty {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .cover-empty svg {
+            opacity: 0.3;
+        }
+
+        .cover-empty span {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-500);
+        }
+
+        .cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border-radius: 10px;
+        }
+
+        .cover-wrap:hover .cover-overlay {
+            opacity: 1;
+        }
+
+        .cover-overlay span {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Fields */
+        .song-fields {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .song-input {
+            width: 100%;
+            font-size: 12px;
+            color: var(--black);
+            border: none;
+            border-bottom: 1px solid var(--gray-200);
+            background: transparent;
+            outline: none;
+            padding: 3px 0 5px;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .song-input:focus {
+            border-color: var(--gold);
+        }
+
+        .song-input::placeholder {
+            color: var(--gray-300);
+        }
+
+        .song-input.title {
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .genre-select {
+            font-size: 9px;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: var(--gray-100);
+            padding: 4px 8px;
+            outline: none;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Audio upload */
+        .audio-zone {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            background: var(--gray-100);
+            border: 1px dashed var(--gray-300);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 10px;
+            color: var(--gray-500);
+        }
+
+        .audio-zone:hover {
+            border-color: var(--gold);
+            color: var(--gold-dark);
+            background: var(--gold-light);
+        }
+
+        .audio-zone.uploaded {
+            border-style: solid;
+            border-color: var(--green);
+            background: #f0fff4;
+            color: var(--green);
+        }
+
+        .audio-zone svg {
+            flex-shrink: 0;
+        }
+
+        .audio-filename {
+            font-size: 9px;
+            color: var(--gray-500);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+        }
+
+        /* Delete btn */
+        .btn-delete {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-200);
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--gray-500);
+            font-size: 11px;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+
+        .btn-delete:hover {
+            background: #fff5f5;
+            border-color: #fed7d7;
+            color: var(--red);
+        }
+
+        /* Uploading state */
+        .uploading-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 9px;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .spinner {
+            width: 10px;
+            height: 10px;
+            border: 1.5px solid var(--gray-200);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Add button */
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px dashed var(--gray-300);
+            border-radius: 14px;
+            background: transparent;
+            font-size: 11px;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-add:hover {
+            border-color: var(--gold);
+            color: var(--gold-dark);
+            background: var(--gold-light);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--white);
+            border: 1px dashed var(--gray-200);
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 8px;
+        }
+
+        /* Preview player */
+        .preview-player {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .btn-play-preview {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--black);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .progress-mini {
+            flex: 1;
+            height: 2px;
+            background: var(--gray-200);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            background: var(--gold);
+            border-radius: 1px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .duration-label {
+            font-size: 9px;
+            color: var(--gray-500);
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <div class="page-title">Song Library</div>
+            <div class="page-subtitle">For You, Always. — Admin</div>
+        </div>
+        <div class="header-actions">
+            <div class="song-count" id="songCount">0 lagu</div>
+            <button class="btn-import" onclick="document.getElementById('importJSON').click()">Load JSON</button>
+            <input type="file" id="importJSON" accept=".json" style="display:none;" onchange="loadJSONFile(event)">
+            <button class="btn-reset" onclick="resetLibrary()" title="Reset semua data"
+                style="padding:9px 14px;background:transparent;color:var(--gray-500);border:1px solid var(--gray-200);border-radius:8px;font-size:10px;cursor:pointer;transition:all 0.2s;"
+                onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'"
+                onmouseout="this.style.color='var(--gray-500)';this.style.borderColor='var(--gray-200)'">Reset</button>
+            <button class="btn-save" id="btnSave" onclick="downloadPlaylist()">Download JSON</button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <div class="info-banner">
+            💡 Upload MP3 + cover art, isi judul & artis, klik <strong>Download JSON</strong> — taruh file hasil
+            download di folder <code>studio/</code> lalu push ke GitHub.
+        </div>
+
+        <!-- Song list -->
+        <div class="songs-list" id="songsList"></div>
+
+        <!-- Add button -->
+        <button class="btn-add" onclick="addSong()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Tambah Lagu
+        </button>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── Config ────────────────────────────────────────────────
+        const WORKER_URL = 'https://arcade-edition.aldoramadhan16.workers.dev';
+        const PLAYLIST_JSON_KEY = 'kurasi/playlist.json';
+
+        // ── State ─────────────────────────────────────────────────
+        let songs = [];
+        let toastTimer = null;
+
+        // ── Init ──────────────────────────────────────────────────
+        async function init() {
+            // Load from localStorage first (persists across sessions)
+            const local = loadFromLocal();
+            if (local && local.length > 0) {
+                songs = local;
+                showToast(`${songs.length} lagu dimuat dari penyimpanan lokal.`, 'success');
+                render();
+                return;
+            }
+
+            // Fallback: fetch from CDN if localStorage empty
+            showToast('Memuat playlist...');
+            try {
+                const res = await fetch(`./playlist.json?t=${Date.now()}`);
+                if (res.ok) {
+                    songs = await res.json();
+                    saveToLocal();
+                    showToast('Playlist dimuat!', 'success');
+                } else {
+                    songs = [];
+                    showToast('Playlist kosong — mulai tambah lagu!');
+                }
+            } catch (e) {
+                songs = [];
+                showToast('Siap — mulai tambah lagu!');
+            }
+            render();
+        }
+
+        // ── Render ────────────────────────────────────────────────
+        function render() {
+            const list = document.getElementById('songsList');
+            document.getElementById('songCount').textContent = `${songs.length} lagu`;
+
+            if (songs.length === 0) {
+                list.innerHTML = `
+        <div class="empty-state">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d9d3cb" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <p>Belum ada lagu — klik tambah lagu di bawah</p>
+        </div>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            songs.forEach((song, i) => {
+                const card = document.createElement('div');
+                card.className = 'song-card';
+                card.id = `song-card-${i}`;
+                card.innerHTML = getSongCardHTML(song, i);
+                list.appendChild(card);
+                bindCardEvents(card, song, i);
+            });
+
+            // Auto-save to localStorage on every render
+            saveToLocal();
+        }
+
+        function getSongCardHTML(song, i) {
+            const hasCover = !!song.coverUrl;
+            const hasAudio = !!song.audioUrl;
+
+            return `
+      <!-- Move Controls -->
+      <div class="move-controls">
+        <button class="btn-move" onclick="moveSongUp(${i})" title="Geser ke Atas" ${i === 0 ? 'disabled' : ''}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        </button>
+        <button class="btn-move" onclick="moveSongDown(${i})" title="Geser ke Bawah" ${i === songs.length - 1 ? 'disabled' : ''}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="song-num">${i + 1}</div>
+
+      <!-- Cover -->
+      <div class="cover-wrap" id="cover-wrap-${i}">
+        ${hasCover
+                    ? `<img src="${song.coverUrl}" id="cover-img-${i}" onerror="this.style.display='none'">`
+                    : `<div class="cover-empty" id="cover-empty-${i}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Cover</span>
+            </div>`
+                }
+        <div class="cover-overlay"><span>Ganti</span></div>
+        <input type="file" accept="image/*" class="input-cover hidden" style="display:none;" id="input-cover-${i}">
+      </div>
+
+      <!-- Fields -->
+      <div class="song-fields">
+        <input class="song-input title input-title" placeholder="Judul lagu..." value="${escHtml(song.title || '')}">
+        <input class="song-input input-artist" placeholder="Nama artis..." value="${escHtml(song.artist || '')}">
+        <div class="field-row">
+          <select class="genre-select input-genre">
+            ${['Indonesia', 'International', 'Classic', 'OST', 'Pop', 'R&B'].map(g =>
+                    `<option value="${g}" ${song.genre === g ? 'selected' : ''}>${g}</option>`
+                ).join('')}
+          </select>
+        </div>
+
+        <!-- Audio -->
+        <div id="audio-zone-${i}" class="audio-zone ${hasAudio ? 'uploaded' : ''}">
+          ${hasAudio ? `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="audio-filename">${escHtml(song.audioName || 'Audio terupload')}</span>
+          ` : `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span>Upload file MP3</span>
+          `}
+          <input type="file" accept="audio/*,.mp3" style="display:none;" id="input-audio-${i}">
+        </div>
+
+        <!-- Preview player (only if has audio) -->
+        ${hasAudio ? `
+        <div class="preview-player">
+          <button class="btn-play-preview" id="btn-play-${i}">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="progress-mini"><div class="progress-mini-fill" id="progress-${i}"></div></div>
+          <span class="duration-label" id="duration-${i}">--:--</span>
+          <audio id="audio-player-${i}" src="${song.audioUrl}" style="display:none;"></audio>
+        </div>
+        ` : ''}
+      </div>
+
+      <!-- Delete -->
+      <button class="btn-delete" onclick="deleteSong(${i})">✕</button>
+    `;
+        }
+
+        function bindCardEvents(card, song, i) {
+            // Title
+            card.querySelector('.input-title')?.addEventListener('input', e => {
+                songs[i].title = e.target.value;
+                saveToLocal();
+            });
+
+            // Artist
+            card.querySelector('.input-artist')?.addEventListener('input', e => {
+                songs[i].artist = e.target.value;
+                saveToLocal();
+            });
+
+            // Genre
+            card.querySelector('.input-genre')?.addEventListener('change', e => {
+                songs[i].genre = e.target.value;
+                saveToLocal();
+            });
+
+            // Cover click
+            const coverWrap = card.querySelector(`#cover-wrap-${i}`);
+            const inputCover = card.querySelector(`#input-cover-${i}`);
+            coverWrap?.addEventListener('click', () => inputCover?.click());
+            inputCover?.addEventListener('change', async (e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                if (!f.type.startsWith('image/')) return showToast('Format harus gambar!', 'error');
+                if (f.size > 5 * 1024 * 1024) return showToast('Cover maksimal 5MB', 'error');
+                showToast('Mengupload cover...');
+                try {
+                    const url = await uploadToR2(f);
+                    songs[i].coverUrl = url;
+                    // Update UI
+                    const img = card.querySelector(`#cover-img-${i}`);
+                    const empty = card.querySelector(`#cover-empty-${i}`);
+                    if (img) { img.src = url; img.style.display = 'block'; }
+                    else {
+                        coverWrap.innerHTML = `<img src="${url}" id="cover-img-${i}" style="width:100%;height:100%;object-fit:cover;display:block;"><div class="cover-overlay"><span>Ganti</span></div><input type="file" accept="image/*" style="display:none;" id="input-cover-${i}">`;
+                        bindCardEvents(card, songs[i], i); // Rebind
+                    }
+                    if (empty) empty.style.display = 'none';
+                    showToast('Cover tersimpan!', 'success');
+                } catch (err) {
+                    showToast('Gagal upload cover: ' + err.message, 'error');
+                }
+                inputCover.value = '';
+            });
+
+            // Audio click
+            const audioZone = card.querySelector(`#audio-zone-${i}`);
+            const inputAudio = card.querySelector(`#input-audio-${i}`);
+            audioZone?.addEventListener('click', () => inputAudio?.click());
+            inputAudio?.addEventListener('change', async (e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                if (f.size > 15 * 1024 * 1024) return showToast('MP3 maksimal 15MB', 'error');
+
+                // Show uploading state
+                audioZone.innerHTML = `<div class="uploading-badge"><div class="spinner"></div> Mengupload audio...</div><input type="file" accept="audio/*,.mp3" style="display:none;" id="input-audio-${i}">`;
+                showToast('Mengupload MP3...');
+
+                try {
+                    const url = await uploadToR2(f);
+                    songs[i].audioUrl = url;
+                    songs[i].audioName = f.name;
+
+                    // Auto-fill title from filename if empty
+                    if (!songs[i].title) {
+                        songs[i].title = f.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+                        card.querySelector('.input-title').value = songs[i].title;
+                    }
+
+                    audioZone.className = 'audio-zone uploaded';
+                    audioZone.innerHTML = `
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="audio-filename">${escHtml(f.name)}</span>
+          <input type="file" accept="audio/*,.mp3" style="display:none;" id="input-audio-${i}">
+        `;
+                    // Re-bind audio input
+                    audioZone.querySelector(`#input-audio-${i}`)?.addEventListener('change', () => { });
+
+                    // Add preview player
+                    const existingPlayer = card.querySelector('.preview-player');
+                    if (!existingPlayer) {
+                        const playerDiv = document.createElement('div');
+                        playerDiv.className = 'preview-player';
+                        playerDiv.innerHTML = `
+            <button class="btn-play-preview" id="btn-play-${i}">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <div class="progress-mini"><div class="progress-mini-fill" id="progress-${i}"></div></div>
+            <span class="duration-label" id="duration-${i}">--:--</span>
+            <audio id="audio-player-${i}" src="${url}" style="display:none;"></audio>
+          `;
+                        audioZone.insertAdjacentElement('afterend', playerDiv);
+                        bindPlayerEvents(i);
+                    }
+
+                    showToast('Audio tersimpan!', 'success');
+                } catch (err) {
+                    audioZone.className = 'audio-zone';
+                    audioZone.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span>Upload file MP3</span><input type="file" accept="audio/*,.mp3" style="display:none;" id="input-audio-${i}">`;
+                    showToast('Gagal upload audio: ' + err.message, 'error');
+                }
+                inputAudio.value = '';
+            });
+
+            // Bind player if audio exists
+            if (song.audioUrl) bindPlayerEvents(i);
+        }
+
+        function bindPlayerEvents(i) {
+            const player = document.getElementById(`audio-player-${i}`);
+            const btn = document.getElementById(`btn-play-${i}`);
+            const progress = document.getElementById(`progress-${i}`);
+            const duration = document.getElementById(`duration-${i}`);
+            if (!player || !btn) return;
+
+            player.addEventListener('loadedmetadata', () => {
+                const m = Math.floor(player.duration / 60);
+                const s = Math.floor(player.duration % 60).toString().padStart(2, '0');
+                if (duration) duration.textContent = `${m}:${s}`;
+            });
+
+            player.addEventListener('timeupdate', () => {
+                if (player.duration && progress) {
+                    progress.style.width = (player.currentTime / player.duration * 100) + '%';
+                }
+            });
+
+            player.addEventListener('ended', () => {
+                btn.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                if (progress) progress.style.width = '0%';
+            });
+
+            btn.addEventListener('click', () => {
+                // Pause all others
+                document.querySelectorAll('audio').forEach(a => { if (a !== player) { a.pause(); } });
+                document.querySelectorAll('.btn-play-preview').forEach(b => {
+                    if (b !== btn) b.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                });
+
+                if (player.paused) {
+                    player.play();
+                    btn.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                } else {
+                    player.pause();
+                    btn.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                }
+            });
+        }
+
+        // ── Import JSON ───────────────────────────────────────────
+        function loadJSONFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        songs = imported;
+                        saveToLocal();
+                        render();
+                        showToast('JSON berhasil dimuat!', 'success');
+                    } else {
+                        throw new Error("Invalid structure");
+                    }
+                } catch (err) {
+                    showToast('Format JSON tidak valid!', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Clear input so same file can be selected again
+            event.target.value = '';
+        }
+
+        // ── Move Up / Down ──────────────────────────────────────────
+        function moveSongUp(i) {
+            if (i <= 0) return;
+            // Swap with previous
+            const temp = songs[i];
+            songs[i] = songs[i - 1];
+            songs[i - 1] = temp;
+            
+            saveToLocal();
+            render();
+            // Optional: scroll slightly to keep focus
+            document.getElementById(`song-card-${i - 1}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function moveSongDown(i) {
+            if (i >= songs.length - 1) return;
+            // Swap with next
+            const temp = songs[i];
+            songs[i] = songs[i + 1];
+            songs[i + 1] = temp;
+            
+            saveToLocal();
+            render();
+            // Optional: scroll slightly to keep focus
+            document.getElementById(`song-card-${i + 1}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ── Add / Delete ──────────────────────────────────────────
+        function addSong() {
+            songs.push({ title: '', artist: '', genre: 'Indonesia', coverUrl: '', audioUrl: '', audioName: '' });
+            render();
+            // Scroll to last card
+            const cards = document.querySelectorAll('.song-card');
+            if (cards.length > 0) cards[cards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function deleteSong(i) {
+            if (songs.length === 1) {
+                if (!confirm('Hapus lagu ini? Song Library akan kosong.')) return;
+            } else {
+                if (!confirm(`Hapus "${songs[i].title || 'lagu ini'}"?`)) return;
+            }
+            songs.splice(i, 1);
+            render();
+        }
+
+        // ── Upload to R2 ──────────────────────────────────────────
+        async function uploadToR2(file) {
+            // Step 1: Presign
+            const presignRes = await fetch(`${WORKER_URL}/presign`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, contentType: file.type || 'application/octet-stream' })
+            });
+            if (!presignRes.ok) throw new Error('Presign gagal');
+            const { key, publicUrl } = await presignRes.json();
+
+            // Step 2: Upload direct
+            const uploadRes = await fetch(`${WORKER_URL}/upload-direct/${key}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': file.type || 'application/octet-stream' },
+                body: file
+            });
+            if (!uploadRes.ok) throw new Error('Upload gagal');
+            return publicUrl;
+        }
+
+        // ── Download Playlist JSON ────────────────────────────────
+        function downloadPlaylist() {
+            // Validate
+            const invalid = songs.find(s => !s.title.trim() || !s.artist.trim());
+            if (invalid) return showToast('Judul & artis wajib diisi untuk semua lagu!', 'error');
+            if (songs.length === 0) return showToast('Belum ada lagu ditambahkan!', 'error');
+
+            const payload = songs.map(s => ({
+                title: s.title.trim(),
+                artist: s.artist.trim(),
+                genre: s.genre || 'Indonesia',
+                coverUrl: s.coverUrl || '',
+                audioUrl: s.audioUrl || '',
+                audioName: s.audioName || s.title,
+            }));
+
+            const jsonStr = JSON.stringify(payload, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'playlist.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const btn = document.getElementById('btnSave');
+            btn.textContent = 'Downloaded ✓';
+            btn.className = 'btn-save saved';
+            showToast(`playlist.json berhasil didownload! Taruh di folder studio/ lalu push ke GitHub.`, 'success');
+
+            setTimeout(() => {
+                btn.textContent = 'Download JSON';
+                btn.className = 'btn-save';
+            }, 3000);
+        }
+
+        // ── Reset Library ─────────────────────────────────────────
+        function resetLibrary() {
+            if (!confirm('Reset semua data? Semua lagu yang belum di-download akan hilang.')) return;
+            songs = [];
+            try { localStorage.removeItem('fya_song_library'); } catch (e) { }
+            render();
+            showToast('Data direset.', 'error');
+        }
+
+        // ── Utils ─────────────────────────────────────────────────
+        function escHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function showToast(msg, type = '') {
+            const t = document.getElementById('toast');
+            if (toastTimer) clearTimeout(toastTimer);
+            t.textContent = msg;
+            t.className = 'toast show' + (type ? ' ' + type : '');
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // ── Auto-save to localStorage on any change ──────────────
+        function saveToLocal() {
+            try { localStorage.setItem('fya_song_library', JSON.stringify(songs)); } catch (e) { }
+        }
+
+        function loadFromLocal() {
+            try {
+                const saved = localStorage.getItem('fya_song_library');
+                return saved ? JSON.parse(saved) : null;
+            } catch (e) { return null; }
+        }
+
+        // ── Boot ──────────────────────────────────────────────────
+        init();
+    </script>
+</body>
+
+</html>
