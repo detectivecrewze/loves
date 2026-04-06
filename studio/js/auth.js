@@ -103,6 +103,19 @@ const Auth = (() => {
   }
 
   function _getTokenFromURL() {
+    // Support clean URL: /studio/:token/:pass
+    const path = window.location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+    // path = ['studio', token, pass]
+    if (path.length >= 2 && path[0] === 'studio') {
+      const token = path[1];
+      if (token && !token.includes('.')) {
+        if (path.length >= 3) {
+          try { sessionStorage.setItem(`loves_auth_${token}`, 'true'); } catch (e) {}
+        }
+        return token;
+      }
+    }
+    // Fallback: query params
     const params = new URLSearchParams(window.location.search);
     if (params.get('token')) return params.get('token');
     if (params.get('id')) return params.get('id');

@@ -261,8 +261,6 @@
           <div class="flex-1 min-w-0">
             <h2 class="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold mb-1">Moments (Gallery)</h2>
             <p class="text-[7px] text-[#d4a373] uppercase tracking-[0.2em] font-bold truncate">✨ Kenangan Indah</p>
-            <p class="text-[8px] text-gray-400 mt-1 lowercase tracking-wide font-medium italic">video pendek 1-10 detik,
-              video akan otomatis tanpa suara. <span class="not-italic font-bold ml-1 uppercase border border-[#d4a373]/30 bg-[#fdf9f4] text-[#b58756] px-1.5 py-0.5 rounded-full inline-block scale-90">Max 15</span></p>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
             <button
@@ -288,6 +286,10 @@
               </p>
             </div>
             <div id="photo-grid" class="mt-6 grid grid-cols-2 gap-3"></div>
+            <p class="text-[8px] text-gray-400 mt-3 lowercase tracking-wide font-medium italic text-center">video pendek 1-10 detik,
+              video akan play otomatis tanpa suara. <span
+                class="not-italic font-bold ml-1 uppercase border border-[#d4a373]/30 bg-[#fdf9f4] text-[#b58756] px-1.5 py-0.5 rounded-full inline-block scale-90">Max
+                20</span></p>
             <input id="file-gallery" type="file" multiple
               accept="image/*,video/mp4,video/webm,video/ogg,video/quicktime" class="hidden" />
           </div>
@@ -355,10 +357,13 @@
               <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-50">
                 <div class="flex items-center gap-3">
                   <div>
-                    <p id="label-display-top-places" class="text-[8px] uppercase tracking-[0.25em] text-[#d4a373] font-bold">Top Places</p>
+                    <p id="label-display-top-places"
+                      class="text-[8px] uppercase tracking-[0.25em] text-[#d4a373] font-bold">Top Places</p>
                     <p class="text-[9px] text-gray-300 mt-0.5">Singkat agar pas di tampilan — maks 5</p>
                   </div>
-                  <button type="button" class="btn-change-label text-[7px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/30 text-[#b58756] px-2 py-1 rounded-md hover:bg-[#d4a373] hover:text-white transition-all shadow-sm" data-target="top-places">
+                  <button type="button"
+                    class="btn-change-label text-[7px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/30 text-[#b58756] px-2 py-1 rounded-md hover:bg-[#d4a373] hover:text-white transition-all shadow-sm"
+                    data-target="top-places">
                     Ubah Judul
                   </button>
                   <input type="hidden" id="select-top-places-label" value="Top Places" />
@@ -382,10 +387,13 @@
               <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-50">
                 <div class="flex items-center gap-3">
                   <div>
-                    <p id="label-display-core-memories" class="text-[8px] uppercase tracking-[0.25em] text-[#d4a373] font-bold">Core Memories</p>
+                    <p id="label-display-core-memories"
+                      class="text-[8px] uppercase tracking-[0.25em] text-[#d4a373] font-bold">Core Memories</p>
                     <p class="text-[9px] text-gray-300 mt-0.5">Momen terbaik kalian — maks 5</p>
                   </div>
-                  <button type="button" class="btn-change-label text-[7px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/30 text-[#b58756] px-2 py-1 rounded-md hover:bg-[#d4a373] hover:text-white transition-all shadow-sm" data-target="core-memories">
+                  <button type="button"
+                    class="btn-change-label text-[7px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/30 text-[#b58756] px-2 py-1 rounded-md hover:bg-[#d4a373] hover:text-white transition-all shadow-sm"
+                    data-target="core-memories">
                     Ubah Judul
                   </button>
                   <input type="hidden" id="select-core-memories-label" value="Core Memories" />
@@ -414,13 +422,16 @@
         <div class="absolute inset-0 bg-white/95 backdrop-blur-md"></div>
         <div class="relative max-w-sm w-full bg-white rounded-3xl border border-[#d4a373]/20 shadow-2xl p-8">
           <h3 id="label-modal-title" class="text-2xl font-serif italic mb-2 text-center text-gray-800">Pilih Judul</h3>
-          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-8 text-center text-balance font-mono">Select a variant for your card</p>
-          
+          <p
+            class="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-8 text-center text-balance font-mono">
+            Select a variant for your card</p>
+
           <div id="label-options-container" class="space-y-3">
             <!-- Injected by JS -->
           </div>
 
-          <button id="btn-close-label-modal" class="w-full mt-8 py-3 text-[9px] uppercase tracking-widest font-bold border border-gray-200 rounded-xl text-gray-400 hover:bg-gray-50 transition-colors">Tutup</button>
+          <button id="btn-close-label-modal"
+            class="w-full mt-8 py-3 text-[9px] uppercase tracking-widest font-bold border border-gray-200 rounded-xl text-gray-400 hover:bg-gray-50 transition-colors">Tutup</button>
         </div>
       </div>
 
@@ -508,7 +519,8 @@
           class="w-full py-3 mb-3 text-[11px] uppercase tracking-widest font-bold bg-white text-black border border-gray-200 rounded-full hover:bg-gray-50 hover:border-black transition-all shadow-sm flex items-center justify-center gap-2 focus:outline-none">
           <span>👁 Lihat Live Preview</span>
         </button>
-        <button id="submit-btn" class="w-full py-3 mb-3 text-[9px] uppercase tracking-widest font-bold bg-gray-800 text-white rounded-full hover:bg-black transition-all shadow-sm">
+        <button id="submit-btn"
+          class="w-full py-3 mb-3 text-[9px] uppercase tracking-widest font-bold bg-gray-800 text-white rounded-full hover:bg-black transition-all shadow-sm">
           <span class="submit-text">Publikasikan Kado ❤️</span>
         </button>
         <button id="btn-publish-vip" class="btn-premium w-full shadow-[0_0_15px_rgba(212,163,115,0.4)]">
@@ -697,8 +709,7 @@
 
       <!-- WA Button -->
       <!-- Link akan di inject via JS -->
-      <a id="btn-contact-admin-vip"
-        href="#" target="_blank"
+      <a id="btn-contact-admin-vip" href="#" target="_blank"
         class="w-full flex items-center justify-center gap-3 py-4 rounded-xl mb-3 font-bold text-[11px] uppercase tracking-widest text-white transition-all hover:opacity-90"
         style="background: #25d366;">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

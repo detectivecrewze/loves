@@ -14,7 +14,7 @@
 export default {
   async fetch(request, env) {
     const CDN_URL = env.CDN_URL || 'https://arcade-assets.for-you-always.my.id';
-    const DOMAIN = 'https://for-you-always.my.id';
+    const DOMAIN = 'https://love.for-you-always.my.id';
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
@@ -127,14 +127,13 @@ export default {
         const id = body.id || url.searchParams.get("id");
         if (!id) return json({ error: "Missing 'id'" }, 400);
 
-        // Kalau sudah published, require studioPassword untuk edit ulang
+        // Cek apakah ID sudah ada
         const existingRaw = await env.LOVES_KV.get(id);
         if (existingRaw) {
           const existing = JSON.parse(existingRaw);
-          if (existing.submitted_at && existing.studioPassword) {
-            if (body.studioPassword !== existing.studioPassword) {
-              return json({ error: "Project sudah dipublish. Password editor salah." }, 403);
-            }
+          // Preserve password if not provided in update
+          if (!body.studioPassword && existing.studioPassword) {
+            body.studioPassword = existing.studioPassword;
           }
         }
 
@@ -156,16 +155,13 @@ export default {
         const id = body.id;
         if (!id) return json({ error: "Missing 'id'" }, 400);
 
-        // Cek apakah ID sudah ada dan sudah published
+        // Cek apakah ID sudah ada
         const existingRaw = await env.LOVES_KV.get(id);
         if (existingRaw) {
           const existing = JSON.parse(existingRaw);
-          if (existing.submitted_at) {
-            // Kalau sudah published, hanya boleh di-override kalau ada studioPassword yang benar
-            const isAuthed = body.studioPassword && existing.studioPassword === body.studioPassword;
-            if (!isAuthed) {
-              return json({ error: "ID ini sudah dipublish. Tidak bisa diubah tanpa password editor." }, 403);
-            }
+          // Preserve password if not provided in submit
+          if (!body.studioPassword && existing.studioPassword) {
+            body.studioPassword = existing.studioPassword;
           }
         }
 
@@ -177,8 +173,8 @@ export default {
           success: true,
           message: "Published!",
           id,
-          giftUrl: `${DOMAIN}/loves/?to=${id}`,
-          studioUrl: `${DOMAIN}/studio/?token=${id}`
+          giftUrl: `${DOMAIN}/loves/${id}`,
+          studioUrl: `${DOMAIN}/studio/${id}`
         });
       } catch (error) {
         return json({ error: error.message }, 500);
@@ -334,8 +330,8 @@ ATURAN WAJIB:
 
         await env.LOVES_KV.put(customId, JSON.stringify(initialConfig));
 
-        const studioUrl = `${DOMAIN}/studio/?token=${customId}${studioPassword ? `&pass=${studioPassword}` : ''}`;
-        const giftUrl = `${DOMAIN}/loves/?to=${customId}`;
+        const studioUrl = `${DOMAIN}/studio/${customId}${studioPassword ? `/${studioPassword}` : ''}`;
+        const giftUrl = `${DOMAIN}/loves/${customId}`;
 
         return json({
           success: true,

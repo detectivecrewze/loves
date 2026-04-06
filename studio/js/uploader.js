@@ -8,7 +8,7 @@
  */
 
 const Uploader = (() => {
-  const MAX_ITEMS = 15;
+  const MAX_ITEMS = 20;
   const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB
   const MAX_VIDEO_SIZE = 50 * 1024 * 1024;  // 50MB
   const ACCEPTED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
@@ -72,7 +72,7 @@ const Uploader = (() => {
       f.type.startsWith('image/') || _isVideoFile(f)
     );
     const remaining = MAX_ITEMS - _photos.length;
-    if (remaining <= 0) { Studio.showToast('Maksimal 15 foto/video!'); return; }
+    if (remaining <= 0) { Studio.showToast('Maksimal 20 foto/video!'); return; }
 
     for (const file of files.slice(0, remaining)) {
       const isVideo = _isVideoFile(file);

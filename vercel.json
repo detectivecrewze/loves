@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/loves/:token", "destination": "/?to=:token" },
+    { "source": "/studio/:token", "destination": "/studio/?token=:token" },
+    { "source": "/studio/:token/:pass", "destination": "/studio/?token=:token&pass=:pass" }
+  ]
+}

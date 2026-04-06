@@ -92,7 +92,7 @@ const Publisher = (() => {
 
       if (data.success) {
         Autosave.cancel();
-        const giftUrl = data.giftUrl || `https://for-you-always.my.id/loves/?to=${_validatedPayload.id}`;
+        const giftUrl = data.giftUrl || `https://love.for-you-always.my.id/loves/${_validatedPayload.id}`;
         _showSuccessModal(giftUrl);
       } else {
         throw new Error(data.error || 'Server error');

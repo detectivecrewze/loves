@@ -690,9 +690,21 @@
         const errorEl = document.getElementById('app-error');
         const errorMsg = document.getElementById('app-error-msg');
 
-        // Read token from URL (?to=TOKEN)
+        // Read token from URL — support both query params and clean paths
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('to') || urlParams.get('token') || urlParams.get('id');
+        function _getToken() {
+            if (urlParams.get('to')) return urlParams.get('to');
+            if (urlParams.get('token')) return urlParams.get('token');
+            if (urlParams.get('id')) return urlParams.get('id');
+            // Clean URL: /loves/:token
+            const path = window.location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+            if (path.length >= 2 && path[0] === 'loves') {
+                const t = path[1];
+                if (t && !t.includes('.')) return t;
+            }
+            return null;
+        }
+        const token = _getToken();
 
         if (!token) {
             // ── FALLBACK MODE: Tidak ada token ──────────
