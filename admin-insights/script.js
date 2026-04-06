@@ -9,13 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRefresh = document.getElementById('btn-refresh');
     const adminSecretInput = document.getElementById('admin-secret');
     const tableBody = document.getElementById('gift-table-body');
-    
+
     // Bulk elements
     const bulkActions = document.getElementById('bulk-actions');
     const selectedCount = document.getElementById('selected-count');
     const btnBulkDelete = document.getElementById('btn-bulk-delete');
     const selectAllCheckbox = document.getElementById('select-all');
-    
+
     // Filters
     const searchInput = document.getElementById('search-input');
     const filterTheme = document.getElementById('filter-theme');
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!secret) return alert('Kunci Secret diperlukan untuk mengakses memori ini.');
 
         localStorage.setItem('loves_admin_secret', secret);
-        
+
         btnRefresh.innerText = 'MEMUAT...';
         btnRefresh.disabled = true;
         selectedIds.clear();
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const topThemeRaw = Object.keys(themeCounts).reduce((a, b) => themeCounts[a] > themeCounts[b] ? a : b, 'original');
         const themeNames = {
-            'original': 'Original / Rose', 'rose': 'Original', 
+            'original': 'Original / Rose', 'rose': 'Original',
             'magenta': 'Magenta', 'pinky': 'Magenta',
             'rosewood': 'Rosewood', 'beige': 'Rosewood',
             'midnight': 'Midnight', 'blanc': 'Midnight',
@@ -121,14 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
             audioCounts[a] = (audioCounts[a] || 0) + 1;
         });
         let topAudioRaw = Object.keys(audioCounts).reduce((a, b) => audioCounts[a] > audioCounts[b] ? a : b, 'none');
-        if(topAudioRaw === 'none' && Object.keys(audioCounts).length > 1) {
-             const others = Object.keys(audioCounts).filter(k => k !== 'none');
-             topAudioRaw = others.reduce((a, b) => audioCounts[a] > audioCounts[b] ? a : b);
+        if (topAudioRaw === 'none' && Object.keys(audioCounts).length > 1) {
+            const others = Object.keys(audioCounts).filter(k => k !== 'none');
+            topAudioRaw = others.reduce((a, b) => audioCounts[a] > audioCounts[b] ? a : b);
         }
 
         const audioNames = {
-            'none': 'Suasana Hening', 'rain': 'Rain in Paris', 'cafe': 'Quiet Cafe', 
-            'waves': 'Ocean Waves', 'fireplace': 'Warm Fire', 'forest': 'Deep Forest', 
+            'none': 'Suasana Hening', 'rain': 'Rain in Paris', 'cafe': 'Quiet Cafe',
+            'waves': 'Ocean Waves', 'fireplace': 'Warm Fire', 'forest': 'Deep Forest',
             'nadin-ah': 'Nadin Amizah', 'daniel': 'Daniel Caesar', 'mitski': 'Mitski', 'custom': 'Custom Uploads'
         };
         document.getElementById('stat-audio').innerText = audioNames[topAudioRaw] || topAudioRaw.toUpperCase();
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateStr = gift.publishedAt ? new Date(gift.publishedAt).toLocaleString('id-ID', {
                 day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
             }) : '-';
-            
+
             const lastOpenedStr = gift.lastOpened ? new Date(gift.lastOpened).toLocaleString('id-ID', {
                 day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
             }) : '<span class="opacity-30 italic">Belum tersentuh</span>';
@@ -160,14 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let badgeClass = 'badge-gold';
             let themeName = 'Original';
 
-            if(theme.includes('magenta') || theme.includes('pinky')) { badgeClass = 'badge-rose'; themeName = 'Magenta'; }
-            else if(theme.includes('midnight') || theme.includes('blanc')) { badgeClass = 'badge-night'; themeName = 'Midnight'; }
-            else if(theme.includes('mossy') || theme.includes('sage')) { badgeClass = 'badge-moss'; themeName = 'Mossy'; }
-            else if(theme.includes('rosewood') || theme.includes('beige')) { badgeClass = 'badge-wood'; themeName = 'Rosewood'; }
-            else if(theme.includes('silver')) { badgeClass = 'badge-night'; themeName = 'Silver'; }
+            if (theme.includes('magenta') || theme.includes('pinky')) { badgeClass = 'badge-rose'; themeName = 'Magenta'; }
+            else if (theme.includes('midnight') || theme.includes('blanc')) { badgeClass = 'badge-night'; themeName = 'Midnight'; }
+            else if (theme.includes('mossy') || theme.includes('sage')) { badgeClass = 'badge-moss'; themeName = 'Mossy'; }
+            else if (theme.includes('rosewood') || theme.includes('beige')) { badgeClass = 'badge-wood'; themeName = 'Rosewood'; }
+            else if (theme.includes('silver')) { badgeClass = 'badge-night'; themeName = 'Silver'; }
 
-            // Loves uses URL query parameter on app.html
-            const giftUrl = `${window.location.origin}/app.html?to=${gift.id}`;
+            // Loves uses URL query parameter on index.html
+            const giftUrl = `${window.location.origin}/index.html?to=${gift.id}`;
             // Let's assume the editing dashboard is either /studio or /studio-premium
             const editorUrl = `../studio/index.html?token=${gift.id}`;
 
@@ -228,24 +228,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = allGiftsRaw.filter(g => {
             const matchesSearch = g.id.toLowerCase().includes(query) || (g.recipientName || '').toLowerCase().includes(query);
-            
+
             let matchesTheme = true;
-            if(themeFilter !== 'all') {
+            if (themeFilter !== 'all') {
                 const t = String(g.theme || 'original').toLowerCase();
                 const map = { 'rose': 'original', 'original': 'original', 'pinky': 'magenta', 'magenta': 'magenta', 'rosewood': 'rosewood', 'beige': 'rosewood', 'midnight': 'midnight', 'blanc': 'midnight', 'mossy': 'mossy', 'sage': 'mossy', 'silver': 'silver' };
                 matchesTheme = map[t] === themeFilter;
             }
 
             let matchesVoice = true; // Doesn't exactly apply well cleanly if hasVoice is not recorded accurately but leaving filter struct.
-            
+
             let matchesStatus = true;
-            if(statusFilter !== 'all') {
+            if (statusFilter !== 'all') {
                 const now = new Date();
                 const lo = g.lastOpened ? new Date(g.lastOpened) : null;
                 const days = lo ? (now - lo) / (1000 * 60 * 60 * 24) : null;
-                if(statusFilter === 'active') matchesStatus = (lo && days <= 30);
-                else if(statusFilter === 'stale') matchesStatus = (lo && days > 30);
-                else if(statusFilter === 'never') matchesStatus = !lo;
+                if (statusFilter === 'active') matchesStatus = (lo && days <= 30);
+                else if (statusFilter === 'stale') matchesStatus = (lo && days > 30);
+                else if (statusFilter === 'never') matchesStatus = !lo;
             }
 
             return matchesSearch && matchesTheme && matchesVoice && matchesStatus;
@@ -256,9 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Bindings ──
     btnRefresh.addEventListener('click', fetchGifts);
-    
+
     if (adminSecretInput) {
-        adminSecretInput.addEventListener('keydown', e => { if(e.key === 'Enter') fetchGifts(); });
+        adminSecretInput.addEventListener('keydown', e => { if (e.key === 'Enter') fetchGifts(); });
     }
 
     searchInput.addEventListener('input', applyFilters);
@@ -267,16 +267,16 @@ document.addEventListener('DOMContentLoaded', () => {
     filterStatus.addEventListener('change', applyFilters);
 
     selectAllCheckbox.addEventListener('change', e => {
-        if(e.target.checked) allGifts.forEach(g => selectedIds.add(g.id));
+        if (e.target.checked) allGifts.forEach(g => selectedIds.add(g.id));
         else selectedIds.clear();
         renderTable(allGifts);
         updateBulkActionsUI();
     });
 
     tableBody.addEventListener('change', e => {
-        if(e.target.classList.contains('row-checkbox')) {
+        if (e.target.classList.contains('row-checkbox')) {
             const id = e.target.dataset.id;
-            if(e.target.checked) selectedIds.add(id);
+            if (e.target.checked) selectedIds.add(id);
             else selectedIds.delete(id);
             renderTable(allGifts);
             updateBulkActionsUI();
@@ -285,9 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnBulkDelete.addEventListener('click', async () => {
         const ids = Array.from(selectedIds);
-        if(ids.length === 0) return;
-        
-        if(!confirm(`🔥 Peringatan!\nAnda akan membakar ${ids.length} kenangan secara permanen.\nTindakan ini ireversibel. Lanjutkan?`)) return;
+        if (ids.length === 0) return;
+
+        if (!confirm(`🔥 Peringatan!\nAnda akan membakar ${ids.length} kenangan secara permanen.\nTindakan ini ireversibel. Lanjutkan?`)) return;
 
         const secret = adminSecretInput.value.trim();
         btnBulkDelete.innerText = 'MEMBAKAR...';
@@ -300,13 +300,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ ids })
             });
             const data = await res.json();
-            if(data.success) {
+            if (data.success) {
                 alert(`Memori berhasil dihapus dari dimensi ini.`);
                 fetchGifts();
             } else {
                 alert(`Tolak akses penghapusan: ${data.error}`);
             }
-        } catch(e) {
+        } catch (e) {
             alert('Gangguan saat membakar memori.');
         } finally {
             btnBulkDelete.innerText = 'Hapus Terpilih';

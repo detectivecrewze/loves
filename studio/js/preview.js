@@ -29,7 +29,7 @@ const Preview = (() => {
     try {
       await Autosave.saveNow();
       // URL ke app Loves dengan token
-      const previewUrl = `../app.html?to=${token}&preview=true&t=${Date.now()}`;
+      const previewUrl = `../index.html?to=${token}&preview=true&t=${Date.now()}`;
       previewWin.location.href = previewUrl;
     } catch (e) {
       previewWin.close();
@@ -48,7 +48,7 @@ const Preview = (() => {
 
     try {
       await Autosave.saveNow();
-      const previewUrl = `../app.html?to=${token}&preview=true&page=${page}&t=${Date.now()}`;
+      const previewUrl = `../index.html?to=${token}&preview=true&page=${page}&t=${Date.now()}`;
       previewWin.location.href = previewUrl;
     } catch (e) {
       previewWin.close();
