@@ -1351,6 +1351,18 @@
 
                 function scratchStart(e) {
                     if (revealed) return;
+                    
+                    // WAKING UP VIDEO ON FIRST TOUCH
+                    // Mobile browsers require media playback to be initiated directly by a user gesture.
+                    // Doing this on 'touchstart' or 'mousedown' guarantees it won't be blocked.
+                    if (isVideo && img.tagName === 'VIDEO' && img.paused) {
+                        img.muted = true;
+                        const p = img.play();
+                        if (p !== undefined) {
+                            p.catch(() => { img.controls = true; });
+                        }
+                    }
+
                     isDrawing = true;
                     scratch(e);
                 }
