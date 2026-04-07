@@ -1296,8 +1296,15 @@
                 img.className = 'scratch-image';
                 img.src = mediaSrc;
                 if (isVideo) {
-                    img.autoplay = true; img.loop = true;
-                    img.muted = true; img.playsInline = true;
+                    // Set as proper HTML attributes (required for mobile Safari/Chrome autoplay)
+                    img.setAttribute('autoplay', '');
+                    img.setAttribute('loop', '');
+                    img.setAttribute('muted', '');
+                    img.setAttribute('playsinline', '');
+                    img.setAttribute('preload', 'auto');
+                    img.muted = true; // Also set via JS property (iOS Safari requires both)
+                    img.loop = true;
+                    img.playsInline = true;
                 } else {
                     img.alt = memory.caption || '';
                     img.referrerPolicy = 'no-referrer';
@@ -1384,7 +1391,20 @@
                         canvas.classList.add('revealed');
                         const rect = canvas.getBoundingClientRect();
                         spawnGlitter(rect.left + rect.width / 2, rect.top + rect.height / 2);
-                        
+
+                        // Explicitly play video on reveal — the scratch gesture counts as user interaction
+                        // This is required for mobile browsers (iOS Safari, Android Chrome)
+                        if (isVideo && img.tagName === 'VIDEO') {
+                            img.muted = true;
+                            const playPromise = img.play();
+                            if (playPromise !== undefined) {
+                                playPromise.catch(() => {
+                                    // If still blocked, show video controls as fallback
+                                    img.controls = true;
+                                });
+                            }
+                        }
+
                         // Show caption when revealed
                         cap.style.opacity = '1';
                         cap.style.transform = 'rotate(-1.5deg) translateY(0)';
