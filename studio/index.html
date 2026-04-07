@@ -257,24 +257,28 @@
 
       <!-- 3. Moments / Gallery -->
       <section id="section-gallery" class="section-card mb-12">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex-1 min-w-0">
-            <h2 class="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold mb-1">Moments (Gallery)</h2>
-            <p class="text-[7px] text-[#d4a373] uppercase tracking-[0.2em] font-bold truncate">✨ Kenangan Indah</p>
+        <div class="mb-4">
+          <!-- Row 1: Title + collapse -->
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex-1 min-w-0">
+              <h2 class="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold mb-1">Moments (Gallery)</h2>
+              <p class="text-[7px] text-[#d4a373] uppercase tracking-[0.2em] font-bold">✨ Kenangan Indah</p>
+            </div>
+            <button class="section-collapse-btn flex-shrink-0 ml-3">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
           </div>
-          <div class="flex items-center gap-2 flex-shrink-0">
+          <!-- Row 2: Action buttons (always full-width friendly) -->
+          <div class="flex items-center gap-2 flex-wrap">
             <button
               class="btn-section-preview text-[8px] uppercase tracking-[0.1em] px-3 py-1.5 bg-[#fdf9f4] text-[#b58756] border border-[#d4a373] rounded-full hover:bg-[#d4a373] hover:text-white transition shadow-sm whitespace-nowrap"
               data-preview-page="page-gallery">👁 Preview</button>
             <button id="btn-add-moment"
               class="text-[8px] uppercase tracking-[0.1em] px-3 py-1.5 bg-black text-white rounded-full hover:bg-gray-800 transition shadow-sm whitespace-nowrap">+
               Tambah Foto / Video</button>
-            <button class="section-collapse-btn">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </button>
           </div>
         </div>
         <div class="section-body">
@@ -286,7 +290,8 @@
               </p>
             </div>
             <div id="photo-grid" class="mt-6 grid grid-cols-2 gap-3"></div>
-            <p class="text-[8px] text-gray-400 mt-3 lowercase tracking-wide font-medium italic text-center">video pendek 1-10 detik,
+            <p id="gallery-reorder-hint" class="hidden text-[8px] text-[#b58756] mt-3 text-center font-bold uppercase tracking-widest">☰ Tahan & Geser foto untuk ubah urutan</p>
+            <p class="text-[8px] text-gray-400 mt-2 lowercase tracking-wide font-medium italic text-center">video pendek 1-10 detik,
               video akan play otomatis tanpa suara. <span
                 class="not-italic font-bold ml-1 uppercase border border-[#d4a373]/30 bg-[#fdf9f4] text-[#b58756] px-1.5 py-0.5 rounded-full inline-block scale-90">Max
                 20</span></p>
@@ -298,21 +303,25 @@
 
       <!-- 4. Love Wrapped -->
       <section id="section-wrapped" class="section-card mb-12">
-        <div class="flex items-center justify-between mb-8">
-          <div class="flex-1 min-w-0">
-            <h2 class="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold mb-1">Love Wrapped</h2>
-            <p class="text-[7px] text-[#d4a373] uppercase tracking-[0.2em] font-bold truncate">✨ Rekap Kebersamaan</p>
-          </div>
-          <div class="flex items-center gap-2 flex-shrink-0">
-            <button
-              class="btn-section-preview text-[8px] uppercase tracking-[0.1em] px-3 py-1.5 bg-[#fdf9f4] text-[#b58756] border border-[#d4a373] rounded-full hover:bg-[#d4a373] hover:text-white transition shadow-sm whitespace-nowrap"
-              data-preview-page="page-wrapped">👁 Preview</button>
-            <button class="section-collapse-btn">
+        <div class="mb-8">
+          <!-- Row 1: Title + collapse -->
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex-1 min-w-0">
+              <h2 class="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold mb-1">Love Wrapped</h2>
+              <p class="text-[7px] text-[#d4a373] uppercase tracking-[0.2em] font-bold">✨ Rekap Kebersamaan</p>
+            </div>
+            <button class="section-collapse-btn flex-shrink-0 ml-3">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
             </button>
+          </div>
+          <!-- Row 2: Preview button -->
+          <div class="flex items-center gap-2">
+            <button
+              class="btn-section-preview text-[8px] uppercase tracking-[0.1em] px-3 py-1.5 bg-[#fdf9f4] text-[#b58756] border border-[#d4a373] rounded-full hover:bg-[#d4a373] hover:text-white transition shadow-sm whitespace-nowrap"
+              data-preview-page="page-wrapped">👁 Preview</button>
           </div>
         </div>
         <div class="section-body">

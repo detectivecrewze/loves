@@ -15,6 +15,7 @@ const Uploader = (() => {
 
   let _photos = []; // [{ id, url, caption, uploading, isVideo }]
   let _uploadingCount = 0;
+  let _sortable = null;
 
   function init(existingPhotos) {
     if (existingPhotos && Array.isArray(existingPhotos)) {
@@ -117,15 +118,17 @@ const Uploader = (() => {
   function _renderGrid() {
     const grid = document.getElementById('photo-grid');
     const dropzone = document.getElementById('photo-dropzone');
+    const reorderHint = document.getElementById('gallery-reorder-hint');
     if (!grid) return;
 
     grid.innerHTML = '';
     const hasItems = _photos.length > 0;
     dropzone?.classList.toggle('hidden', hasItems);
+    if (reorderHint) reorderHint.classList.toggle('hidden', !hasItems);
 
     _photos.forEach((photo, i) => {
       const item = document.createElement('div');
-      item.className = 'relative group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm';
+      item.className = 'relative group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm cursor-grab active:cursor-grabbing';
       item.dataset.id = photo.id;
 
       const mediaEl = photo.isVideo
@@ -141,8 +144,16 @@ const Uploader = (() => {
               <div class="w-5 h-5 border-2 border-gray-200 border-t-[#d4a373] rounded-full animate-spin"></div>
             </div>
           ` : ''}
-          <div class="absolute top-2 left-2 w-5 h-5 bg-[#d4a373] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">${i+1}</div>
+          <div class="photo-number absolute top-2 left-2 w-5 h-5 bg-[#d4a373] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">${i+1}</div>
           <button class="btn-remove-photo absolute top-2 right-2 w-6 h-6 bg-white/90 rounded-full items-center justify-center text-[10px] hidden group-hover:flex hover:bg-rose-500 hover:text-white shadow-sm" data-id="${photo.id}">✕</button>
+          <!-- Drag indicator -->
+          <div class="drag-handle absolute bottom-2 right-2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" title="Geser untuk atur urutan">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <circle cx="3" cy="2.5" r="1" fill="#d4a373"/><circle cx="7" cy="2.5" r="1" fill="#d4a373"/>
+              <circle cx="3" cy="5" r="1" fill="#d4a373"/><circle cx="7" cy="5" r="1" fill="#d4a373"/>
+              <circle cx="3" cy="7.5" r="1" fill="#d4a373"/><circle cx="7" cy="7.5" r="1" fill="#d4a373"/>
+            </svg>
+          </div>
         </div>
         <div class="px-3 py-2">
           <textarea class="photo-caption w-full text-[11px] text-center text-gray-600 bg-transparent border-b border-gray-100 focus:border-[#d4a373] focus:outline-none placeholder-gray-300 resize-none leading-relaxed italic" placeholder="Tulis cerita di sini..." maxlength="120" rows="2" data-id="${photo.id}">${(photo.caption || '').replace(/"/g, '&quot;')}</textarea>
@@ -150,6 +161,26 @@ const Uploader = (() => {
       `;
       grid.appendChild(item);
     });
+
+    // Init / re-init sortable drag-to-reorder
+    if (_sortable) _sortable.destroy();
+    if (hasItems && typeof Sortable !== 'undefined') {
+      _sortable = new Sortable(grid, {
+        animation: 180,
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        delay: 120,             // slight delay so tap doesn't drag accidentally
+        delayOnTouchOnly: true, // on desktop: drag immediately; touch: wait 120ms
+        forceFallback: false,
+        onEnd(evt) {
+          // Re-order internal array to match new DOM order
+          const newOrder = Array.from(grid.children).map(el => el.dataset.id);
+          _photos.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+          _updateNumbers();
+          Autosave.trigger();
+        }
+      });
+    }
 
     // Play video on hover for preview
     grid.querySelectorAll('video').forEach(vid => {
@@ -174,6 +205,13 @@ const Uploader = (() => {
         if (p) { p.caption = inp.value; Autosave.trigger(); }
       });
     });
+  }
+
+  // Re-number the badges without full re-render (fast update after drag)
+  function _updateNumbers() {
+    const grid = document.getElementById('photo-grid');
+    if (!grid) return;
+    grid.querySelectorAll('.photo-number').forEach((el, i) => { el.textContent = i + 1; });
   }
 
   function getPhotos() {
