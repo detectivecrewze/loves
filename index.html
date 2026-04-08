@@ -403,9 +403,9 @@
         opacity: 0.85; margin-bottom: 2rem; display: block;
     }
     .letter-body {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.05rem; font-weight: 300; color: #1e293b;
-        line-height: 2; padding-left: 0.25rem; white-space: pre-wrap;
+        font-family: var(--font-dancing);
+        font-size: 1.4rem; font-weight: 500; color: #334155;
+        line-height: 1.8; padding-left: 0.25rem; white-space: pre-wrap;
     }
     .letter-body p { margin-bottom: 1rem; }
     .letter-body p:last-child { margin-bottom: 0; }
@@ -415,8 +415,8 @@
         padding-top: 1.25rem; border-top: 1px dashed rgba(244,63,94,0.15);
     }
     .letter-signature {
-        font-family: 'Sacramento', cursive; font-size: 2.2rem;
-        color: rgba(126,12,35,0.55); transform: rotate(-3deg);
+        font-family: 'Mrs Saint Delafield', cursive; font-size: 2.8rem;
+        color: rgba(126,12,35,0.7); transform: rotate(-2deg);
         display: inline-block; padding-right: 0.5rem;
         align-self: flex-end; margin-left: auto;
     }
@@ -960,11 +960,12 @@
                 const correct = loginCfg.password || '123';
                 if (val === correct) {
                     lockIcon.textContent = 'lock_open';
-                    lockIcon.style.color = '#d4a373';
-                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-weight: 600; font-size:1.5rem; color:white">check</span>';
-                    btn.style.background = 'linear-gradient(135deg, #d4a373, #b58756)';
-                    btn.style.boxShadow = '0 8px 25px rgba(212, 163, 115, 0.4)';
-                    btn.style.transform = 'scale(1.1)';
+                    lockIcon.style.color = 'var(--primary)';
+                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-weight: 800; font-size:1.6rem; color:white">check</span>';
+                    btn.style.background = 'var(--primary)';
+                    btn.style.boxShadow = '0 0 35px rgba(126, 12, 35, 0.45)';
+                    btn.style.transform = 'scale(1.2)';
+                    btn.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                     setTimeout(() => navigateTo('music'), 800);
                 } else {
                     errMsg.textContent = loginCfg.errorMessage || 'Password salah, coba lagi!';
