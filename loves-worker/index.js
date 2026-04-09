@@ -346,6 +346,66 @@ ATURAN WAJIB:
     }
 
     // ═══════════════════════════════════════════════════════════════════
+    // POST /change-id — Rename Link (Ganti ID)
+    // Dipanggil dari halaman Generator (Admin only)
+    // ═══════════════════════════════════════════════════════════════════
+    if (request.method === "POST" && url.pathname === "/change-id") {
+      try {
+        const authHeader = request.headers.get("Authorization");
+        const secret = env.GENERATOR_SECRET || "loves2026";
+
+        if (!authHeader || authHeader !== `Bearer ${secret}`) {
+          return json({ success: false, error: "Unauthorized" }, 401);
+        }
+
+        const body = await request.json();
+        const oldId = body.oldId?.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+        const newId = body.newId?.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+        if (!oldId || !newId) {
+          return json({ error: "Old ID dan New ID harus diisi." }, 400);
+        }
+        if (newId.length < 3) {
+          return json({ error: "New ID minimal 3 karakter (huruf kecil, angka, strip)." }, 400);
+        }
+
+        // Cek apakah oldId ada
+        const existingOldRaw = await env.LOVES_KV.get(oldId);
+        if (!existingOldRaw) {
+          return json({ error: `Data untuk ID '${oldId}' tidak ditemukan.` }, 404);
+        }
+
+        // Cek apakah newId sudah ada
+        const existingNewRaw = await env.LOVES_KV.get(newId);
+        if (existingNewRaw) {
+          return json({ error: `ID '${newId}' sudah digunakan. Pilih ID baru yang lain.` }, 409);
+        }
+
+        // Copy data
+        const parsedData = JSON.parse(existingOldRaw);
+        parsedData.id = newId;
+        parsedData.updated_at = new Date().toISOString();
+
+        await env.LOVES_KV.put(newId, JSON.stringify(parsedData));
+        await env.LOVES_KV.delete(oldId);
+
+        const studioPassword = parsedData.studioPassword;
+        const studioUrl = `${DOMAIN}/studio/${newId}${studioPassword ? `/${studioPassword}` : ''}`;
+        const giftUrl = `${DOMAIN}/${newId}`;
+
+        return json({
+          success: true,
+          id: newId,
+          studioUrl,
+          giftUrl,
+          message: `ID berhasil diganti dari ${oldId} menjadi ${newId}`
+        });
+      } catch (error) {
+        return json({ error: error.message }, 500);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
     // GET /admin/list-gifts — Daftar semua gift (Admin only)
     // ═══════════════════════════════════════════════════════════════════
     if (request.method === "GET" && url.pathname === "/admin/list-gifts") {

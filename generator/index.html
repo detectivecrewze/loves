@@ -32,15 +32,21 @@
     </div>
   </div>
 
-  <!-- GENERATOR PANEL (hidden initially) -->
+  <!-- GENERATOR & RENAME PANEL (hidden initially) -->
   <div id="generator-panel" class="hidden w-full max-w-md fade-in">
     <div class="text-center mb-10">
       <h1 class="text-3xl font-light tracking-tight text-gray-900 mb-2">Generator Link</h1>
-      <p class="text-[9px] uppercase tracking-[0.4em] text-gray-400">Loves Edition — Buat Link Baru</p>
+      <p class="text-[9px] uppercase tracking-[0.4em] text-gray-400">Loves Edition — Kelola Link</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5">
+    <!-- TAB NAVIGATION -->
+    <div class="flex items-center gap-2 mb-6 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto max-w-xs">
+      <button id="tab-create" class="flex-1 py-2 text-[9px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/20 text-[#b58756] rounded-lg shadow-sm transition-all pointer-events-none">Buat Baru</button>
+      <button id="tab-rename" class="flex-1 py-2 text-[9px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all">Ganti Nama</button>
+    </div>
 
+    <!-- PANEL CREATE -->
+    <div id="panel-create" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5 fade-in">
       <!-- ID / Slug -->
       <div>
         <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">ID / Slug Kado</label>
@@ -71,11 +77,36 @@
       <p id="gen-error" class="hidden text-[9px] text-rose-500 text-center font-semibold"></p>
     </div>
 
+    <!-- PANEL RENAME -->
+    <div id="panel-rename" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5 fade-in">
+      <!-- Old ID -->
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">ID Lama (Sebelumnya)</label>
+        <input id="rename-old-id" type="text" placeholder="e.g. jojo-salah-nama"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+      </div>
+
+      <!-- New ID -->
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">ID Baru (Yang Benar)</label>
+        <input id="rename-new-id" type="text" placeholder="e.g. jojo-for-cella"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+        <p class="text-[8px] text-gray-400 mt-1.5">Huruf kecil, angka, strip saja. Min. 3 karakter.</p>
+      </div>
+
+      <!-- Submit button -->
+      <button id="btn-rename" class="w-full bg-gray-900 text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-black transition-colors shadow-sm mt-2">
+        <span class="btn-text">Ganti Nama Link →</span>
+      </button>
+
+      <p id="rename-error" class="hidden text-[9px] text-rose-500 text-center font-semibold"></p>
+    </div>
+
     <!-- RESULT -->
     <div id="result-card" class="hidden mt-6 bg-white rounded-2xl shadow-sm border border-emerald-100 p-8 space-y-5 fade-in">
       <div class="flex items-center gap-2 mb-2">
         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-        <p class="text-[9px] uppercase tracking-widest text-emerald-600 font-semibold">Berhasil Dibuat!</p>
+        <p id="result-title" class="text-[9px] uppercase tracking-widest text-emerald-600 font-semibold">Berhasil Dibuat!</p>
       </div>
 
       <div>
@@ -100,12 +131,13 @@
       </div>
 
       <button id="btn-generate-another" class="w-full border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-semibold uppercase tracking-widest hover:border-gray-800 hover:text-gray-800 transition-colors">
-        + Buat Link Lain
+        + Buat / Kelola Lainnya
       </button>
     </div>
   </div>
 
   <!-- Toast -->
+
   <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-[9px] uppercase tracking-widest font-semibold shadow-lg z-50"></div>
 
   <script>
@@ -149,6 +181,29 @@
       btn.disabled = false;
     });
 
+    // ── Tab Navigation ───────────────────────────────────────────────
+    const tabCreate = document.getElementById('tab-create');
+    const tabRename = document.getElementById('tab-rename');
+    const panelCreate = document.getElementById('panel-create');
+    const panelRename = document.getElementById('panel-rename');
+    const resultCard = document.getElementById('result-card');
+
+    tabCreate.addEventListener('click', () => {
+      tabCreate.className = 'flex-1 py-2 text-[9px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/20 text-[#b58756] rounded-lg shadow-sm transition-all pointer-events-none';
+      tabRename.className = 'flex-1 py-2 text-[9px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all';
+      panelRename.classList.add('hidden');
+      panelCreate.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+    });
+
+    tabRename.addEventListener('click', () => {
+      tabRename.className = 'flex-1 py-2 text-[9px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/20 text-[#b58756] rounded-lg shadow-sm transition-all pointer-events-none';
+      tabCreate.className = 'flex-1 py-2 text-[9px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all';
+      panelCreate.classList.add('hidden');
+      panelRename.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+    });
+
     // ── Auto-generate ID toggle ──────────────────────────────────────
     document.getElementById('auto-gen-id').addEventListener('change', function() {
       const idInput = document.getElementById('gen-id');
@@ -188,6 +243,7 @@
         const data = await res.json();
 
         if (data.success) {
+          document.getElementById('result-title').textContent = 'Berhasil Dibuat!';
           document.getElementById('result-id').textContent = data.id;
           document.getElementById('result-studio').textContent = data.studioUrl;
           document.getElementById('result-gift').textContent = data.giftUrl;
@@ -206,11 +262,65 @@
       btn.disabled = false;
     });
 
+    // ── Rename Link ──────────────────────────────────────────────────
+    document.getElementById('btn-rename').addEventListener('click', async () => {
+      const oldInput = document.getElementById('rename-old-id');
+      const newInput = document.getElementById('rename-new-id');
+      const btn = document.getElementById('btn-rename');
+      const btnText = btn.querySelector('.btn-text');
+      const errEl = document.getElementById('rename-error');
+
+      const oldId = oldInput.value.trim();
+      const newId = newInput.value.trim();
+
+      if (!oldId || !newId) {
+        errEl.textContent = 'Isi kedua ID!';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      btnText.textContent = 'Memproses...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/change-id`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${_authToken}`
+          },
+          body: JSON.stringify({ oldId, newId })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('result-title').textContent = 'Nama Berhasil Diganti!';
+          document.getElementById('result-id').textContent = data.id;
+          document.getElementById('result-studio').textContent = data.studioUrl;
+          document.getElementById('result-gift').textContent = data.giftUrl;
+          document.getElementById('result-card').classList.remove('hidden');
+          document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          errEl.textContent = data.error || 'Gagal mengganti nama link.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Gagal terhubung ke server.';
+        errEl.classList.remove('hidden');
+      }
+
+      btnText.textContent = 'Ganti Nama Link →';
+      btn.disabled = false;
+    });
+
     // ── Generate Another ─────────────────────────────────────────────
     document.getElementById('btn-generate-another').addEventListener('click', () => {
       document.getElementById('result-card').classList.add('hidden');
       document.getElementById('gen-id').value = '';
       document.getElementById('gen-studio-pass').value = '';
+      document.getElementById('rename-old-id').value = '';
+      document.getElementById('rename-new-id').value = '';
       document.getElementById('auto-gen-id').checked = false;
       document.getElementById('gen-id').disabled = false;
     });
