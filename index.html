@@ -537,6 +537,25 @@
             margin-left: 0;
         }
 
+        .play-btn.is-loading .play-icon-span {
+            opacity: 0;
+        }
+
+        .play-btn.is-loading::after {
+            content: '';
+            position: absolute;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: play-btn-spin 0.8s linear infinite;
+        }
+
+        @keyframes play-btn-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .volume-wrapper {
             display: flex;
             align-items: center;
@@ -2312,6 +2331,23 @@
                 });
                 audio.addEventListener('play', () => setMusicPlaying(true));
                 audio.addEventListener('pause', () => setMusicPlaying(false));
+
+                audio.addEventListener('waiting', () => {
+                    const btn = document.getElementById('play-btn');
+                    if (btn) btn.classList.add('is-loading');
+                });
+                audio.addEventListener('playing', () => {
+                    const btn = document.getElementById('play-btn');
+                    if (btn) btn.classList.remove('is-loading');
+                });
+                audio.addEventListener('canplay', () => {
+                    const btn = document.getElementById('play-btn');
+                    if (btn) btn.classList.remove('is-loading');
+                });
+                audio.addEventListener('error', () => {
+                    const btn = document.getElementById('play-btn');
+                    if (btn) btn.classList.remove('is-loading');
+                });
 
                 document.getElementById('progress-touch').addEventListener('click', (e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
