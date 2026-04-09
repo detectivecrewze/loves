@@ -2014,6 +2014,13 @@
             const DATA = window.VALENTINE_DATA || {};
             const songs = DATA.music || [];
 
+            // ── AUDIO Initialization ─────────────────────────────────
+            // Add Audio for printer
+            const printerSfx = new Audio();
+            printerSfx.src = 'assets/sfx1.dat'; 
+            printerSfx.loop = true;
+            printerSfx.preload = 'auto';
+
             // ── Theme ────────────────────────────────────────────────
             // ── Init Login ───────────────────────────────────────────
             (function initLogin() {
@@ -2076,6 +2083,22 @@
                     const val = input.value.trim();
                     const correct = loginCfg.password || '123';
                     if (val === correct) {
+                        // UNLOCK AUDIO FOR MOBILE (Priming)
+                        // Playing and immediately pausing on a real user gesture (click)
+                        // is required to allow automatic audio play later on HP devices.
+                        if (printerSfx) {
+                            printerSfx.play().then(() => {
+                                printerSfx.pause();
+                                printerSfx.currentTime = 0;
+                            }).catch(() => {});
+                        }
+                        // Also prime the main music audio
+                        if (audio) {
+                            audio.play().then(() => {
+                                audio.pause();
+                            }).catch(() => {});
+                        }
+
                         lockIcon.textContent = 'lock_open';
                         lockIcon.style.color = 'var(--primary)';
                         btn.innerHTML = '<span class="material-symbols-outlined" style="font-weight: 800; font-size:1.6rem; color:white">check</span>';
@@ -2100,13 +2123,6 @@
 
             // ── SPA Navigation ───────────────────────────────────────
             const pages = ['login', 'music', 'gallery', 'wrapped', 'surat', 'invitation'];
-
-            // Add Audio for printer
-            const printerSfx = new Audio();
-            // Since we don't have the original blob logic locally in static-pages, we'll try a generic fallback if needed,
-            // but we'll try to load from the parent folder's assets.
-            printerSfx.src = '../assets/sfx1.dat'; // Note might be blocked, but we'll try
-            printerSfx.loop = true;
 
             window.navigateTo = function (pageId) {
                 let currentIndex = -1;
@@ -2921,14 +2937,6 @@
             });
 
         } // end initializeValentineApp
-
-        // Expose navigateTo globally
-        window.navigateTo = function (targetId) {
-            document.querySelectorAll('.spa-page').forEach(sec => sec.classList.remove('active'));
-            const target = document.getElementById('page-' + targetId);
-            if (target) target.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
     </script>
 </body>
 
