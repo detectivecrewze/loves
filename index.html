@@ -1746,6 +1746,20 @@
             '06-invitation': 'invitation'
         };
 
+        // ── Early Audio Preloader ───────────────────────────────────────────
+        const audio = new Audio();
+        audio.volume = 0.8;
+        audio.preload = 'auto';
+
+        function prebufferFirstSong(data) {
+            const songs = Array.isArray(data.music) ? data.music : (data.music ? [data.music] : []);
+            if (songs.length > 0 && songs[0].audioSrc) {
+                audio.src = songs[0].audioSrc;
+                audio.load();
+                console.log('🎵 Early buffering started for:', songs[0].songTitle || 'First Song');
+            }
+        }
+
         // ── Dynamic Navigation ──────────────────────────────────────────────
         // Runs after pages are loaded. Wires up [data-nav] buttons based on
         // which pages are actually active — no text labels, just arrows.
@@ -1822,6 +1836,7 @@
                 if (!window.VALENTINE_DATA || Object.keys(window.VALENTINE_DATA).length === 0) {
                     window.VALENTINE_DATA = _getDemoData();
                 }
+                prebufferFirstSong(window.VALENTINE_DATA);
 
                 if (loadingEl) loadingEl.style.display = 'none';
                 const allPages = PAGE_ORDER;
@@ -1858,6 +1873,7 @@
 
                 // 2. Expose ke global agar initializeValentineApp bisa pakai
                 window.VALENTINE_DATA = _mapConfigToData(config);
+                prebufferFirstSong(window.VALENTINE_DATA);
 
                 // 3. Tentukan halaman mana yang aktif
                 const activePages = config.active_pages || {};
@@ -2213,9 +2229,7 @@
                 window.scrollTo({ top: 0, behavior: 'instant' });
             };
 
-            // ── AUDIO (created ONCE, never destroyed) ────────────────
-            const audio = new Audio();
-            audio.volume = 0.8;
+            // ── AUDIO (Global instance used for early buffering) ──────────
             let currentIndex = 0;
             let lyricsTicker;
 
@@ -2255,8 +2269,11 @@
                 // Typewriter effect for lyrics
                 typeLyrics(song.lyrics || '♪ ♪ ♪');
 
-                audio.src = song.audioSrc;
-                audio.load();
+                // Only load if different to avoid restarting early buffer
+                if (audio.src !== new URL(song.audioSrc, window.location.href).href) {
+                  audio.src = song.audioSrc;
+                  audio.load();
+                }
                 updateDots();
             }
 
