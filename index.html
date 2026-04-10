@@ -2019,12 +2019,33 @@
             const printerSfx = new Audio();
             printerSfx.src = 'assets/sfx1.dat'; 
             printerSfx.loop = true;
-            printerSfx.preload = 'auto';
 
             const scratchSfx = new Audio();
             scratchSfx.src = 'assets/scratching.dat';
             scratchSfx.loop = true;
-            scratchSfx.preload = 'auto';
+
+            // Global iOS Audio Priming (Unlock on FIRST touch/click anywhere)
+            // This is the most reliable way to unlock standard HTMLAudioElements on iOS Safari
+            const _unlockGlobalAudio = () => {
+                const prime = (a) => {
+                    if (!a) return;
+                    a.muted = true;
+                    a.play().then(() => {
+                        a.pause();
+                        a.currentTime = 0;
+                        a.muted = false;
+                    }).catch(() => {
+                        a.muted = false;
+                    });
+                };
+                prime(printerSfx);
+                prime(scratchSfx);
+                prime(audio);
+                document.removeEventListener('touchstart', _unlockGlobalAudio);
+                document.removeEventListener('click', _unlockGlobalAudio);
+            };
+            document.addEventListener('touchstart', _unlockGlobalAudio, { once: true });
+            document.addEventListener('click', _unlockGlobalAudio, { once: true });
 
             // ── Theme ────────────────────────────────────────────────
             // ── Init Login ───────────────────────────────────────────
@@ -2088,26 +2109,10 @@
                     const val = input.value.trim();
                     const correct = loginCfg.password || '123';
                     if (val === correct) {
-                        // UNLOCK AUDIO FOR MOBILE (Priming)
-                        // Playing and immediately pausing on a real user gesture (click)
-                        // is required to allow automatic audio play later on HP devices.
-                        if (printerSfx) {
-                            printerSfx.play().then(() => {
-                                printerSfx.pause();
-                                printerSfx.currentTime = 0;
-                            }).catch(() => {});
-                        }
-                        if (scratchSfx) {
-                            scratchSfx.play().then(() => {
-                                scratchSfx.pause();
-                                scratchSfx.currentTime = 0;
-                            }).catch(() => {});
-                        }
-                        // Also prime the main music audio
+                        // Audio handles are globally primed via touchstart/click event.
+                        // Music starts after the navigateTo delay.
                         if (audio) {
-                            audio.play().then(() => {
-                                audio.pause();
-                            }).catch(() => {});
+                            audio.play().catch(() => {});
                         }
 
                         lockIcon.textContent = 'lock_open';
@@ -2232,10 +2237,12 @@
                         if (printerLed) { printerLed.classList.remove('led-printing'); printerLed.classList.add('led-pulse'); }
 
                         // MUST play outside setTimeout to satisfy mobile Safari user-gesture requirements
-                        printerSfx.currentTime = 0;
-                        printerSfx.volume = 0.6;
-                        const playPromise = printerSfx.play();
-                        if (playPromise !== undefined) playPromise.catch((e) => { console.warn('Printer SFX prevented or missing:', e); });
+                        if (printerSfx) {
+                            printerSfx.currentTime = 0;
+                            printerSfx.volume = 0.6;
+                            const playPromise = printerSfx.play();
+                            if (playPromise !== undefined) playPromise.catch((e) => { });
+                        }
 
                         setTimeout(() => {
                             printerComp.classList.add('is-printing');
@@ -2243,15 +2250,15 @@
                             if (printerLed) { printerLed.classList.remove('led-pulse'); printerLed.classList.add('led-printing'); }
 
                             setTimeout(() => {
-                                printerSfx.pause();
+                                if (printerSfx) printerSfx.pause();
                                 if (printerDevice) printerDevice.classList.remove('printer-vibrating');
                                 if (printerLed) { printerLed.classList.remove('led-printing'); printerLed.classList.add('led-pulse'); }
                             }, 6000);
                         }, 300);
                     }
                 } else {
-                    // Pause printer if leaving the page early
-                    printerSfx.pause();
+                    // Stop printer if navigating away
+                    if (printerSfx) printerSfx.pause();
                 }
 
                 window.scrollTo({ top: 0, behavior: 'instant' });
@@ -2528,6 +2535,7 @@
                         }
 
                         if (scratchSfx) {
+                            scratchSfx.volume = 0.5;
                             scratchSfx.play().catch(() => {});
                         }
 
@@ -2537,9 +2545,7 @@
 
                     function scratchEnd() {
                         isDrawing = false;
-                        if (scratchSfx) {
-                            scratchSfx.pause();
-                        }
+                        if (scratchSfx) scratchSfx.pause();
                         checkReveal();
                     }
 
