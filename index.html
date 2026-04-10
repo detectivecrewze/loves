@@ -2109,11 +2109,8 @@
                     const val = input.value.trim();
                     const correct = loginCfg.password || '123';
                     if (val === correct) {
-                        // Audio handles are globally primed via touchstart/click event.
-                        // Music starts after the navigateTo delay.
-                        if (audio) {
-                            audio.play().catch(() => {});
-                        }
+                        // Audio is pre-buffered via the global touch-primer.
+                        // Playback NOT started here — user must press Play on music page.
 
                         lockIcon.textContent = 'lock_open';
                         lockIcon.style.color = 'var(--primary)';
