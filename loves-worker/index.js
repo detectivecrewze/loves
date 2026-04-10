@@ -330,7 +330,7 @@ ATURAN WAJIB:
 
         await env.LOVES_KV.put(customId, JSON.stringify(initialConfig));
 
-        const studioUrl = `${DOMAIN}/studio/${customId}${studioPassword ? `/${studioPassword}` : ''}`;
+        const studioUrl = `${DOMAIN}/studio/${customId}`;
         const giftUrl = `${DOMAIN}/${customId}`;
 
         return json({
@@ -390,7 +390,7 @@ ATURAN WAJIB:
         await env.LOVES_KV.delete(oldId);
 
         const studioPassword = parsedData.studioPassword;
-        const studioUrl = `${DOMAIN}/studio/${newId}${studioPassword ? `/${studioPassword}` : ''}`;
+        const studioUrl = `${DOMAIN}/studio/${newId}`;
         const giftUrl = `${DOMAIN}/${newId}`;
 
         return json({

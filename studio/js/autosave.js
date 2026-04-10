@@ -83,7 +83,7 @@ const Autosave = (() => {
 
     return {
       id: token,
-      studioPassword: Studio.getStudioPassword(),
+      studioPassword: document.getElementById('input-studio-password') ? document.getElementById('input-studio-password').value : Studio.getStudioPassword(),
       active_pages: AppManager.getActivePages(),
 
       login: {

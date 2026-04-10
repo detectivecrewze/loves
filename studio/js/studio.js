@@ -45,6 +45,7 @@ const Studio = (() => {
     // LOGIN
     _setVal('input-login-password', config.login?.password);
     _setVal('input-login-hint', config.login?.instruction);
+    _setVal('input-studio-password', config.studioPassword);
 
     // MUSIC — handled entirely by music.js (arcade-style), no form fields to populate
 
