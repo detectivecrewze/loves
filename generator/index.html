@@ -69,6 +69,21 @@
         <label for="auto-gen-id" class="text-[10px] text-gray-600 cursor-pointer">Auto-generate ID unik</label>
       </div>
 
+      <!-- Studio Edition -->
+      <div class="space-y-2">
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block">Edisi Studio</label>
+        <div class="flex gap-2">
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="studio-edition" value="studio" checked class="hidden peer">
+            <div class="text-[9px] text-center py-2.5 rounded-xl border border-gray-100 peer-checked:border-gray-800 peer-checked:bg-white transition-all font-bold uppercase tracking-widest text-gray-400 peer-checked:text-gray-900 shadow-sm">Regular</div>
+          </label>
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="studio-edition" value="free-studio" class="hidden peer">
+            <div class="text-[9px] text-center py-2.5 rounded-xl border border-gray-100 peer-checked:border-emerald-500 peer-checked:bg-emerald-50/30 transition-all font-bold uppercase tracking-widest text-gray-400 peer-checked:text-emerald-600 shadow-sm">Giveaway</div>
+          </label>
+        </div>
+      </div>
+
       <!-- Submit button -->
       <button id="btn-generate" class="w-full bg-[#d4a373] text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-[#c4956a] transition-colors shadow-sm mt-2">
         <span class="btn-text">Buat Link Sekarang →</span>
@@ -232,6 +247,7 @@
       btn.disabled = true;
 
       try {
+        const edition = document.querySelector('input[name="studio-edition"]:checked').value;
         const res = await fetch(`${WORKER_URL}/generate-link`, {
           method: 'POST',
           headers: {
@@ -243,12 +259,24 @@
         const data = await res.json();
 
         if (data.success) {
-          document.getElementById('result-title').textContent = 'Berhasil Dibuat!';
+          let studioUrl = data.studioUrl;
+          const isFree = edition === 'free-studio';
+          
+          if (isFree) {
+            studioUrl = studioUrl.replace(/\/studio\/?/, '/free-studio/');
+          }
+
+          document.getElementById('result-title').textContent = isFree ? 'Edisi Giveaway Berhasil!' : 'Berhasil Dibuat!';
           document.getElementById('result-id').textContent = data.id;
-          document.getElementById('result-studio').textContent = data.studioUrl;
+          document.getElementById('result-studio').textContent = studioUrl;
           document.getElementById('result-gift').textContent = data.giftUrl;
           document.getElementById('result-card').classList.remove('hidden');
           document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+
+          // Auto-copy studio link
+          navigator.clipboard.writeText(studioUrl).then(() => {
+            _showToast(`Link Studio ${isFree ? '(Giveaway) ' : ''}tersalin otomatis!`);
+          });
         } else {
           errEl.textContent = data.error || 'Gagal membuat link.';
           errEl.classList.remove('hidden');
