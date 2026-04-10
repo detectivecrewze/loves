@@ -2220,15 +2220,16 @@
                         if (printerDevice) printerDevice.classList.remove('printer-vibrating');
                         if (printerLed) { printerLed.classList.remove('led-printing'); printerLed.classList.add('led-pulse'); }
 
+                        // MUST play outside setTimeout to satisfy mobile Safari user-gesture requirements
+                        printerSfx.currentTime = 0;
+                        printerSfx.volume = 0.6;
+                        const playPromise = printerSfx.play();
+                        if (playPromise !== undefined) playPromise.catch((e) => { console.warn('Printer SFX prevented or missing:', e); });
+
                         setTimeout(() => {
                             printerComp.classList.add('is-printing');
                             if (printerDevice) printerDevice.classList.add('printer-vibrating');
                             if (printerLed) { printerLed.classList.remove('led-pulse'); printerLed.classList.add('led-printing'); }
-
-                            printerSfx.currentTime = 0;
-                            printerSfx.volume = 0.6;
-                            const playPromise = printerSfx.play();
-                            if (playPromise !== undefined) playPromise.catch(() => { });
 
                             setTimeout(() => {
                                 printerSfx.pause();
