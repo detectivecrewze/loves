@@ -2021,6 +2021,11 @@
             printerSfx.loop = true;
             printerSfx.preload = 'auto';
 
+            const scratchSfx = new Audio();
+            scratchSfx.src = 'assets/scratching.dat';
+            scratchSfx.loop = true;
+            scratchSfx.preload = 'auto';
+
             // ── Theme ────────────────────────────────────────────────
             // ── Init Login ───────────────────────────────────────────
             (function initLogin() {
@@ -2090,6 +2095,12 @@
                             printerSfx.play().then(() => {
                                 printerSfx.pause();
                                 printerSfx.currentTime = 0;
+                            }).catch(() => {});
+                        }
+                        if (scratchSfx) {
+                            scratchSfx.play().then(() => {
+                                scratchSfx.pause();
+                                scratchSfx.currentTime = 0;
                             }).catch(() => {});
                         }
                         // Also prime the main music audio
@@ -2516,12 +2527,19 @@
                             }
                         }
 
+                        if (scratchSfx) {
+                            scratchSfx.play().catch(() => {});
+                        }
+
                         isDrawing = true;
                         scratch(e);
                     }
 
                     function scratchEnd() {
                         isDrawing = false;
+                        if (scratchSfx) {
+                            scratchSfx.pause();
+                        }
                         checkReveal();
                     }
 
