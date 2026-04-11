@@ -1,5 +1,5 @@
 /**
- * Loves Edition — Cloudflare Worker
+ * Wrapped Edition — Cloudflare Worker
  * For You, Always — Valentine Gift Platform
  *
  * ARSITEKTUR UPLOAD (Direct to R2):
@@ -216,7 +216,7 @@ export default {
             break;
         }
 
-        const systemInstruction = `Kamu adalah penulis pesan untuk kado digital "Loves Edition".
+        const systemInstruction = `Kamu adalah penulis pesan untuk kado digital "Wrapped Edition".
 Tugasmu: Tuliskan pesan dari hati yang menyesuaikan dengan gaya berikut: [${toneInstruction}]
 ATURAN WAJIB:
 1. Panjang pesan harus berkisar antara 60 hingga 80 kata (sekitar 400-500 karakter).
@@ -495,7 +495,7 @@ ATURAN WAJIB:
         const hint = body.login?.passwordHint || '-';
 
         const summaryMsg =
-          `🎁 *REQUEST LINK PERSONAL — LOVES EDITION*\n\n` +
+          `🎁 *REQUEST LINK PERSONAL — WRAPPED EDITION*\n\n` +
           `👤 Penerima: *${recipientName}*\n` +
           `🔑 Gift ID: \`${token}\`\n` +
           `🌐 Request Domain: \`${requestDomain}.vercel.app\`\n` +
@@ -596,7 +596,7 @@ ATURAN WAJIB:
     // ═══════════════════════════════════════════════════════════════════
     if (url.pathname === "/debug") {
       return json({
-        project: "Loves Edition — For You, Always",
+        project: "Wrapped Edition — For You, Always",
         version: "v1.0",
         hasBucket: !!env.BUCKET,
         hasKV: !!env.LOVES_KV,
@@ -608,7 +608,7 @@ ATURAN WAJIB:
       });
     }
 
-    return new Response("Loves Edition API v1 Running ❤️", {
+    return new Response("Wrapped Edition API v1 Running ❤️", {
       headers: { ...corsHeaders, "Content-Type": "text/plain" }
     });
   }
