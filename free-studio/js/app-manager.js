@@ -5,7 +5,7 @@
 const AppManager = (() => {
 
   const DEFAULT_PAGES = {
-    login:      true,  // Wajib, tidak bisa dimatikan
+    login:      true,
     music:      true,  // Wajib, tidak bisa dimatikan
     gallery:    true,
     wrapped:    true,
