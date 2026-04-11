@@ -489,10 +489,16 @@ ATURAN WAJIB:
         const recipientName = body.surat?.to || body.recipientName || '-';
         const photoCount = Array.isArray(body.gallery?.photos) ? body.gallery.photos.length : 0;
         const musicCount = Array.isArray(body.music) ? body.music.length : 0;
-        const hasVoice = body.voiceNote ? 'Ada ✅' : 'Tidak ❌';
-        const ambient = body.login?.ambient || body.ambient || '-';
         const hasPassword = body.login?.password ? `(${body.login.password})` : '(Tanpa Password)';
-        const hint = body.login?.passwordHint || '-';
+        const hint = body.login?.instruction || body.login?.passwordHint || '-';
+
+        const wrapped = body.wrapped || {};
+        const vibe = wrapped.vibe || '-';
+        const date = wrapped.minutesTogether || '-';
+        const tpLabel = wrapped.topPlacesLabel || 'Top Places';
+        const cmLabel = wrapped.coreMemoriesLabel || 'Core Memories';
+        const tpList = (wrapped.topPlaces || []).map((x, i) => `${i+1}. ${x}`).join(', ') || '-';
+        const cmList = (wrapped.coreMemories || []).map((x, i) => `${i+1}. ${x}`).join(', ') || '-';
 
         const summaryMsg =
           `🎁 *REQUEST LINK PERSONAL — WRAPPED EDITION*\n\n` +
@@ -500,10 +506,13 @@ ATURAN WAJIB:
           `🔑 Gift ID: \`${token}\`\n` +
           `🌐 Request Domain: \`${requestDomain}.vercel.app\`\n` +
           `🕐 Waktu: ${wibStr}\n\n` +
+          `✨ *WRAPPED DATA*\n` +
+          `📅 Special Date: ${date}\n` +
+          `🎭 Vibe: ${vibe}\n` +
+          `📍 *${tpLabel}:* ${tpList}\n` +
+          `🧠 *${cmLabel}:* ${cmList}\n\n` +
           `📸 Foto: ${photoCount} foto\n` +
           `🎵 Lagu: ${musicCount} lagu\n` +
-          `🎙 Voice Note: ${hasVoice}\n` +
-          `🎧 Ambient: ${ambient}\n` +
           `🔒 Password: *${hasPassword}*\n` +
           `💡 Hint: ${hint}\n\n` +
           `──────────────────\n` +
@@ -529,7 +538,7 @@ ATURAN WAJIB:
           wrapped: {
             vibeLabel: body.wrapped?.vibeLabel || "Our Vibe",
             vibe: body.wrapped?.vibe || "",
-            HoursTogetherLabel: body.wrapped?.minutesTogetherLabel || "Hours Together",
+            HoursTogetherLabel: body.wrapped?.minutesTogetherLabel || "Minutes Together",
             HoursTogether: body.wrapped?.minutesTogether || "",
             imageSrc: body.wrapped?.imageUrl || "",
             topPlacesLabel: body.wrapped?.topPlacesLabel || "Top Places",

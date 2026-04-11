@@ -262,13 +262,13 @@ section {
 .btn-premium {
   background: var(--text-main);
   color: #fff;
-  padding: 1.25rem 3rem;
+  padding: 1rem 2.5rem;
   border-radius: 100px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 10px;
   box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.2);
   border: none;
   cursor: pointer;
@@ -780,7 +780,7 @@ section {
 
   .btn-premium {
     padding: 1rem 2rem;
-    font-size: 0.65rem;
+    font-size: 9px;
   }
 
   .section-hint {
