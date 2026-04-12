@@ -2,6 +2,8 @@
   "rewrites": [
     { "source": "/studio/:token", "destination": "/studio/?token=:token" },
     { "source": "/studio/:token/:pass", "destination": "/studio/?token=:token&pass=:pass" },
+    { "source": "/free-studio/:token", "destination": "/free-studio/?token=:token" },
+    { "source": "/free-studio/:token/:pass", "destination": "/free-studio/?token=:token&pass=:pass" },
     { "source": "/:token", "destination": "/?to=:token" }
   ]
 }

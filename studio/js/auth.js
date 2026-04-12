@@ -103,10 +103,10 @@ const Auth = (() => {
   }
 
   function _getTokenFromURL() {
-    // Support clean URL: /studio/:token/:pass
+    // Support clean URL: /studio/:token/:pass or /free-studio/:token/:pass
     const path = window.location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
-    // path = ['studio', token, pass]
-    if (path.length >= 2 && path[0] === 'studio') {
+    // path = ['studio', token, pass] or ['free-studio', token, pass]
+    if (path.length >= 2 && (path[0] === 'studio' || path[0] === 'free-studio')) {
       const token = path[1];
       if (token && !token.includes('.')) {
         if (path.length >= 3) {
