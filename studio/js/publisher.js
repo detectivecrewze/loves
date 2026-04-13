@@ -281,8 +281,7 @@ const Publisher = (() => {
     const waMessage = encodeURIComponent(
       `REQUEST LINK PERSONAL - LOVES EDITION\n\n` +
       `Gift ID: ${token}\n` +
-      `Request Website: ${domain}.vercel.app\n` +
-      `Pembayaran: 5.000\n\n` +
+      `Request Website: ${domain}.vercel.app\n\n` +
       `Halo admin, saya ingin request link personal untuk kado saya.`
     );
 
