@@ -214,8 +214,13 @@
           <div class="section-body-inner">
             <label class="text-[8px] uppercase tracking-widest text-[#B8A0A6] font-semibold block mb-2">Password
               Akses</label>
-            <input id="input-login-password" type="text" placeholder="e.g. 123" class="input-minimal mb-6"
-              autocomplete="off" />
+            <div class="relative mb-6">
+              <input id="input-login-password" type="password" placeholder="e.g. 123" class="input-minimal pr-8"
+                autocomplete="off" />
+              <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#B8A0A6] hover:text-[#C4687A] transition-colors toggle-password-btn" aria-label="Toggle password visibility">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
 
             <label class="text-[8px] uppercase tracking-widest text-[#B8A0A6] font-semibold block mb-2">Pertanyaan Hint
               Password</label>
@@ -229,8 +234,13 @@
 
             <label class="text-[7px] uppercase tracking-widest text-emerald-600 font-bold block mb-2">Ubah Password
               Studio</label>
-            <input id="input-studio-password" type="text" placeholder="Biarkan kosong jika tidak ingin memakai password"
-              class="input-minimal" autocomplete="off" />
+            <div class="relative">
+              <input id="input-studio-password" type="password" placeholder="Biarkan kosong jika tidak ingin memakai password"
+                class="input-minimal pr-8" autocomplete="off" />
+              <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#B8A0A6] hover:text-[#C4687A] transition-colors toggle-password-btn" aria-label="Toggle password visibility">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
             <p class="section-hint mt-3">⚙ Gunakan password ini saat ingin login ke dashboard Studio kembali. Jangan
               sampai lupa!</p>
           </div>
@@ -882,6 +892,22 @@
   <script src="js/preview.js"></script>
   <script src="js/gemini.js"></script>
   <script src="js/studio.js"></script>
+  
+  <!-- Toggle Password Script -->
+  <script>
+    document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        if (input.type === 'password') {
+          input.type = 'text';
+          this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye-off"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+          input.type = 'password';
+          this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
