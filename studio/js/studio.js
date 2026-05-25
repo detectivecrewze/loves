@@ -140,6 +140,35 @@ const Studio = (() => {
           optionsContainer.appendChild(optBtn);
         });
 
+        // Custom Input Option
+        const customDiv = document.createElement('div');
+        customDiv.className = 'mt-4 flex gap-2';
+        customDiv.innerHTML = `
+          <input type="text" id="custom-label-input" placeholder="Atau ketik judulmu sendiri..." class="flex-1 input-minimal text-[11px] h-[45px] py-0 px-3 border border-[#F9D5DC] rounded-xl bg-white focus:border-[#C4687A] focus:outline-none" />
+          <button id="btn-save-custom-label" class="px-4 text-[9px] uppercase tracking-widest font-bold bg-[#C4687A] text-white rounded-xl hover:bg-[#A8526A] transition-all">Simpan</button>
+        `;
+        optionsContainer.appendChild(customDiv);
+
+        customDiv.querySelector('#btn-save-custom-label').onclick = () => {
+          const opt = customDiv.querySelector('#custom-label-input').value.trim();
+          if (!opt) return;
+          
+          // Update hidden input
+          const hiddenInput = document.getElementById(`select-${target}-label`);
+          if (hiddenInput) hiddenInput.value = opt;
+          
+          // Update UI display
+          const display = document.getElementById(`label-display-${target}`);
+          if (display) display.textContent = opt;
+          
+          // Refresh placeholders
+          WrappedItems.refresh();
+          
+          // Close & Save
+          labelModal.classList.add('hidden');
+          Autosave.trigger();
+        };
+
         labelModal.classList.remove('hidden');
       });
     });
