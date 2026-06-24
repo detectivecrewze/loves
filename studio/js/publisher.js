@@ -287,7 +287,7 @@ const Publisher = (() => {
 
     const waBtn = document.getElementById('btn-contact-admin-vip');
     if (waBtn) {
-      waBtn.href = `https://wa.me/6281381543981?text=${waMessage}`;
+      waBtn.href = `https://wa.me/6281936109076?text=${waMessage}`;
     }
 
     _toggleModal('modal-success-vip', true);

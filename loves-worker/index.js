@@ -301,10 +301,19 @@ ATURAN WAJIB:
           return json({ error: "ID minimal 3 karakter (huruf kecil, angka, strip)" }, 400);
         }
 
+        const studioUrl = `${DOMAIN}/studio/${customId}`;
+        const giftUrl = `${DOMAIN}/${customId}`;
+
         // Cek apakah ID sudah ada
         const existing = await env.LOVES_KV.get(customId);
         if (existing) {
-          return json({ error: `ID '${customId}' sudah digunakan. Pilih ID lain.` }, 409);
+          return json({
+            success: true,
+            id: customId,
+            studioUrl,
+            giftUrl,
+            message: `Link sudah pernah dibuat sebelumnya.`
+          });
         }
 
         // Buat entry kosong di KV
@@ -329,9 +338,6 @@ ATURAN WAJIB:
         };
 
         await env.LOVES_KV.put(customId, JSON.stringify(initialConfig));
-
-        const studioUrl = `${DOMAIN}/studio/${customId}`;
-        const giftUrl = `${DOMAIN}/${customId}`;
 
         return json({
           success: true,
