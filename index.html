@@ -10,6 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="shared.css">
     <script src="data.js"></script>
+    <script src="i18n.js"></script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/favicons/favicon-96x96.png" sizes="96x96" />
@@ -1870,6 +1871,7 @@
                 if (!res.ok) throw new Error('Gagal memuat. Coba muat ulang.');
 
                 const config = await res.json();
+                WrappedI18n.initGift(config);
 
                 // 2. Expose ke global agar initializeValentineApp bisa pakai
                 window.VALENTINE_DATA = _mapConfigToData(config);

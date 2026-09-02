@@ -19,6 +19,10 @@ const Studio = (() => {
 
   function initPostAuth() {
     const config = Auth.getInitialConfig();
+    WrappedI18n.initStudio(config, (nextLocale) => {
+      config.locale = WrappedI18n.set(nextLocale, 'en');
+      Autosave.trigger();
+    });
     _studioPassword = config?.studioPassword || null;
 
     // Init semua modul dengan data dari KV

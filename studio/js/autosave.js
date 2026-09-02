@@ -83,6 +83,7 @@ const Autosave = (() => {
 
     return {
       id: token,
+      locale: WrappedI18n.get(),
       studioPassword: document.getElementById('input-studio-password') ? document.getElementById('input-studio-password').value : Studio.getStudioPassword(),
       active_pages: AppManager.getActivePages(),
 

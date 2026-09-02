@@ -83,6 +83,7 @@ const Autosave = (() => {
 
     return {
       id: token,
+      locale: WrappedI18n.get(),
       studioPassword: Studio.getStudioPassword(),
       active_pages: AppManager.getActivePages(),
 

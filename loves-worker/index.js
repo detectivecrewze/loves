@@ -129,13 +129,18 @@ export default {
 
         // Cek apakah ID sudah ada
         const existingRaw = await env.LOVES_KV.get(id);
+        if (body.locale !== undefined && body.locale !== 'id' && body.locale !== 'en') {
+          return json({ error: "Invalid locale" }, 400);
+        }
         if (existingRaw) {
           const existing = JSON.parse(existingRaw);
           // Preserve password if not provided in update
           if (!body.studioPassword && existing.studioPassword) {
             body.studioPassword = existing.studioPassword;
           }
+          body.locale = body.locale || existing.locale || 'en';
         }
+        if (!existingRaw) body.locale = body.locale || 'id';
 
         body.updated_at = new Date().toISOString();
         await env.LOVES_KV.put(id, JSON.stringify(body));
@@ -157,13 +162,18 @@ export default {
 
         // Cek apakah ID sudah ada
         const existingRaw = await env.LOVES_KV.get(id);
+        if (body.locale !== undefined && body.locale !== 'id' && body.locale !== 'en') {
+          return json({ error: "Invalid locale" }, 400);
+        }
         if (existingRaw) {
           const existing = JSON.parse(existingRaw);
           // Preserve password if not provided in submit
           if (!body.studioPassword && existing.studioPassword) {
             body.studioPassword = existing.studioPassword;
           }
+          body.locale = body.locale || existing.locale || 'en';
         }
+        if (!existingRaw) body.locale = body.locale || 'id';
 
         body.submitted_at = new Date().toISOString();
         body.updated_at = new Date().toISOString();
@@ -320,6 +330,7 @@ ATURAN WAJIB:
         const initialConfig = {
           id: customId,
           studioPassword: studioPassword,
+          locale: 'id',
           active_pages: {
             login: true,
             music: true,
