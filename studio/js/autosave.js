@@ -1,138 +1,93 @@
-/**
- * autosave.js — Background state saving với debounce
- * Loves Edition Studio
- *
- * Mengumpulkan state dari semua modul lalu POST ke /save-config
- */
-
+/** autosave.js — ordered background persistence for Wrapped Studio. */
 const Autosave = (() => {
   let _debounceTimer = null;
+  let _saveQueue = Promise.resolve();
   const DEBOUNCE_MS = 2500;
-
+  const setStatus = (text, hide = false) => {
+    const element = document.getElementById('save-status');
+    if (!element) return;
+    element.textContent = text;
+    element.classList.toggle('opacity-0', hide);
+  };
   function trigger() {
     if (_debounceTimer) clearTimeout(_debounceTimer);
-
-    const saveStatus = document.getElementById('save-status');
-    if (saveStatus) {
-      saveStatus.textContent = 'Menyimpan...';
-      saveStatus.classList.remove('opacity-0');
-    }
-
-    _debounceTimer = setTimeout(saveConfiguration, DEBOUNCE_MS);
+    setStatus('Menyimpan...');
+    _debounceTimer = setTimeout(() => { _debounceTimer = null; saveConfiguration(); }, DEBOUNCE_MS);
   }
-
   function cancel() {
     if (_debounceTimer) clearTimeout(_debounceTimer);
-    const saveStatus = document.getElementById('save-status');
-    if (saveStatus) saveStatus.classList.add('opacity-0');
+    _debounceTimer = null;
+    setStatus('', true);
   }
-
-  async function saveNow() {
+  function saveNow() {
     if (_debounceTimer) clearTimeout(_debounceTimer);
-    const saveStatus = document.getElementById('save-status');
-    if (saveStatus) {
-      saveStatus.textContent = 'Menyimpan...';
-      saveStatus.classList.remove('opacity-0');
-    }
-    await saveConfiguration();
+    _debounceTimer = null;
+    setStatus('Menyimpan...');
+    return saveConfiguration();
   }
-
-  async function saveConfiguration() {
-    // Tunggu kalau masih ada upload yang berjalan
-    if (Uploader.isUploading() || Music.isUploading()) {
-      trigger(); // Retry setelah upload selesai
-      return;
-    }
-
-    const token = Auth.getToken();
-    if (!token) return;
-
-    // Kumpulkan semua state
-    const state = _buildState(token);
-
-    try {
-      const res = await fetch(`${Auth.getWorkerUrl()}/save-config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state)
-      });
-      const data = await res.json();
-
-      const saveStatus = document.getElementById('save-status');
-      if (data.success && saveStatus) {
-        saveStatus.textContent = 'Tersimpan Otomatis ✓';
-        setTimeout(() => saveStatus.classList.add('opacity-0'), 2000);
-      } else if (!data.success) {
-        throw new Error(data.error || 'Unknown error');
+  function saveConfiguration() {
+    const runSave = async () => {
+      if (Uploader.isUploading() || Music.isUploading()) { trigger(); return false; }
+      const token = Auth.getToken();
+      if (!token) return false;
+      try {
+        const response = await fetch(`${Auth.getWorkerUrl()}/save-config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(_buildState(token)),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.error || `Server returned ${response.status}`);
+        setStatus('Tersimpan Otomatis ✓');
+        setTimeout(() => setStatus('', true), 2000);
+        return true;
+      } catch (error) {
+        console.warn('Autosave failed:', error);
+        setStatus('Gagal Menyimpan');
+        setTimeout(() => setStatus('', true), 4000);
+        return false;
       }
-    } catch (e) {
-      console.warn('Autosave failed:', e);
-      const saveStatus = document.getElementById('save-status');
-      if (saveStatus) {
-        saveStatus.textContent = 'Gagal Menyimpan';
-        saveStatus.classList.remove('opacity-0');
-        setTimeout(() => saveStatus.classList.add('opacity-0'), 4000);
-      }
-    }
+    };
+    const queued = _saveQueue.then(runSave, runSave);
+    _saveQueue = queued.then(() => undefined, () => undefined);
+    return queued;
   }
-
   function _buildState(token) {
-    // Bagian Wrapped
-    const placesRaw = document.getElementById('input-wrapped-places')?.value || '';
-    const memoriesRaw = document.getElementById('input-wrapped-memories')?.value || '';
-
     return {
       id: token,
       locale: WrappedI18n.get(),
-      studioPassword: document.getElementById('input-studio-password') ? document.getElementById('input-studio-password').value : Studio.getStudioPassword(),
+      studioPassword: document.getElementById('input-studio-password')?.value || Studio.getStudioPassword(),
       active_pages: AppManager.getActivePages(),
-
       login: {
-        password:    document.getElementById('input-login-password')?.value.trim() || '',
+        password: document.getElementById('input-login-password')?.value.trim() || '',
         instruction: document.getElementById('input-login-hint')?.value.trim() || '',
       },
-
-      music: Music.getPlaylistArray().map(t => ({
-        ...t,
-        songTitle: t.title,
-        audioSrc: t.url,
-        coverSrc: t.coverUrl,
-        lyrics: t.quotes
-      })),
-
+      music: Music.getPlaylistArray().map((track) => ({ ...track, songTitle: track.title, audioSrc: track.url, coverSrc: track.coverUrl, lyrics: track.quotes })),
       gallery: {
-        title:    document.getElementById('input-gallery-title')?.value.trim() || '',
+        title: document.getElementById('input-gallery-title')?.value.trim() || '',
         subtitle: document.getElementById('input-gallery-subtitle')?.value.trim() || '',
-        photos:   Uploader.getPhotos(),
+        photos: Uploader.getPhotos(),
       },
-
       wrapped: {
-        imageUrl:        WrappedUploader.getImageUrl(),
+        imageUrl: WrappedUploader.getImageUrl(),
         minutesTogether: document.getElementById('input-wrapped-date')?.value || '',
-        vibe:            document.getElementById('input-wrapped-vibe')?.value.trim() || '',
-        topPlaces:       WrappedItems.getPlaces(),
-        coreMemories:    WrappedItems.getMemories(),
-        topPlacesLabel:  document.getElementById('select-top-places-label')?.value || 'Top Places',
+        vibe: document.getElementById('input-wrapped-vibe')?.value.trim() || '',
+        topPlaces: WrappedItems.getPlaces(),
+        coreMemories: WrappedItems.getMemories(),
+        topPlacesLabel: document.getElementById('select-top-places-label')?.value || 'Top Places',
         coreMemoriesLabel: document.getElementById('select-core-memories-label')?.value || 'Core Memories',
       },
-
       surat: {
-        to:            document.getElementById('input-letter-to')?.value.trim() || '',
-        message:       document.getElementById('input-letter-msg')?.value || '',
-        from:          document.getElementById('input-letter-from')?.value.trim() || '',
+        to: document.getElementById('input-letter-to')?.value.trim() || '',
+        message: document.getElementById('input-letter-msg')?.value || '',
+        from: document.getElementById('input-letter-from')?.value.trim() || '',
       },
-
       invitation: {
-        question:       document.getElementById('input-inv-question')?.value.trim() || '',
+        question: document.getElementById('input-inv-question')?.value.trim() || '',
         successMessage: document.getElementById('input-inv-success')?.value.trim() || '',
       },
     };
   }
-
-  // Expose untuk dipakai Publisher
-  function buildState() {
-    return _buildState(Auth.getToken());
-  }
-
+  function buildState() { return _buildState(Auth.getToken()); }
   return { trigger, cancel, saveNow, buildState };
 })();

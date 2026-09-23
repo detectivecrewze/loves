@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="preview.css?v=1">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap">
 
   <!-- Favicon -->
@@ -448,7 +449,7 @@
               </div>
             </div>
 
-            <a href="https://love.for-you-always.my.id/index.html?to=love-test&preview=true&page=page-wrapped&t=1775714298053"
+            <a id="btn-preview-demo" href="../index.html?to=love-test&preview=true&page=page-wrapped"
               target="_blank"
               class="flex items-center justify-center gap-2 w-full py-4 mt-8 text-[10px] uppercase tracking-[0.25em] font-bold bg-[#FFF5F7] text-[#A8526A] border border-[#C4687A]/40 rounded-2xl hover:bg-[#C4687A] hover:text-white transition-all shadow-sm group"
               title="Lihat contoh hasil jadi">
@@ -579,6 +580,32 @@
       </div>
     </div>
   </main>
+
+  <!-- Contextual preview modal. Final preview intentionally remains a browser tab. -->
+  <div id="wrapped-preview-modal" class="studio-preview-modal hidden" role="dialog" aria-modal="true"
+    aria-hidden="true" aria-labelledby="wrapped-preview-title" aria-describedby="wrapped-preview-subtitle">
+    <button id="wrapped-preview-backdrop" class="studio-preview-backdrop" type="button" aria-label="Tutup preview"></button>
+    <section class="studio-preview-card" tabindex="-1">
+      <header class="studio-preview-header">
+        <div class="studio-preview-heading">
+          <p class="studio-preview-kicker">LIVE PREVIEW</p>
+          <h2 id="wrapped-preview-title">Preview Kado</h2>
+          <p id="wrapped-preview-subtitle">Perubahan terbaru disimpan sebelum preview dimuat.</p>
+        </div>
+        <button id="wrapped-preview-close" class="studio-preview-close" type="button" aria-label="Tutup preview">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </header>
+      <div id="wrapped-preview-status" class="studio-preview-status" data-state="loading" role="status" aria-live="polite">
+        <span class="studio-preview-spinner" aria-hidden="true"></span>
+        <span id="wrapped-preview-status-text">Menyiapkan preview...</span>
+        <button id="wrapped-preview-retry" type="button" hidden>Coba Lagi</button>
+      </div>
+      <div id="wrapped-preview-stage" class="studio-preview-stage" data-preview-viewport="mobile">
+        <div id="wrapped-preview-device" class="studio-preview-device" aria-live="off"></div>
+      </div>
+    </section>
+  </div>
 
   <!-- Name Input Modal (Publish Confirm) -->
   <div id="modal-name" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-6">
@@ -888,9 +915,9 @@
   <script src="js/music.js"></script>
   <script src="js/media-uploaders.js"></script>
   <script src="js/wrapped-items.js"></script>
-  <script src="js/autosave.js"></script>
+  <script src="js/autosave.js?v=2"></script>
   <script src="js/publisher.js"></script>
-  <script src="js/preview.js"></script>
+  <script src="js/preview.js?v=2"></script>
   <script src="js/gemini.js"></script>
   <script src="js/studio.js"></script>
   
