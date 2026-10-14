@@ -363,6 +363,59 @@ ATURAN WAJIB:
     }
 
     // ═══════════════════════════════════════════════════════════════════
+    // POST /reset-studio-password — Reset password Studio (Admin only)
+    // Hanya mengubah studioPassword; seluruh isi gift tetap dipertahankan.
+    // ═══════════════════════════════════════════════════════════════════
+    if (request.method === "POST" && url.pathname === "/reset-studio-password") {
+      try {
+        const authHeader = request.headers.get("Authorization");
+        const secret = env.GENERATOR_SECRET;
+
+        if (!secret) return json({ success: false, error: "GENERATOR_SECRET belum dikonfigurasi." }, 503);
+        if (!authHeader || authHeader !== `Bearer ${secret}`) {
+          return json({ success: false, error: "Unauthorized" }, 401);
+        }
+
+        const body = await request.json();
+        const id = body.id?.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+        const studioPassword = typeof body.studioPassword === 'string'
+          ? body.studioPassword.trim()
+          : '';
+
+        if (!id) return json({ success: false, error: "ID gift wajib diisi." }, 400);
+        if (!studioPassword) {
+          return json({ success: false, error: "Password Studio baru wajib diisi." }, 400);
+        }
+        if (studioPassword.length < 4 || studioPassword.length > 128) {
+          return json({ success: false, error: "Password Studio harus 4–128 karakter." }, 400);
+        }
+
+        const existingRaw = await env.LOVES_KV.get(id);
+        if (!existingRaw) {
+          return json({ success: false, error: `Gift '${id}' tidak ditemukan.` }, 404);
+        }
+
+        const config = JSON.parse(existingRaw);
+        config.studioPassword = studioPassword;
+        config.updated_at = new Date().toISOString();
+        await env.LOVES_KV.put(id, JSON.stringify(config));
+
+        const studioUrl = `${DOMAIN}/studio/${id}`;
+        const recoveryUrl = `${studioUrl}?pass=${encodeURIComponent(studioPassword)}`;
+        return json({
+          success: true,
+          id,
+          studioUrl,
+          recoveryUrl,
+          giftUrl: `${DOMAIN}/${id}`,
+          message: "Password Studio berhasil direset. Isi gift tidak berubah."
+        });
+      } catch (error) {
+        return json({ success: false, error: error.message }, 500);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
     // POST /change-id — Rename Link (Ganti ID)
     // Dipanggil dari halaman Generator (Admin only)
     // ═══════════════════════════════════════════════════════════════════

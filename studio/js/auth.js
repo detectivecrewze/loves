@@ -37,10 +37,13 @@ const Auth = (() => {
         let isAuthed = false;
         try { isAuthed = sessionStorage.getItem(`loves_auth_${_token}`) === 'true'; } catch (e) {}
 
-        // Cek auto-login via URL ?pass= (dari link generator)
-        const passFromUrl = new URLSearchParams(window.location.search).get('pass');
+        // Cek auto-login via URL ?pass= atau legacy /studio/:token/:pass.
+        // Password dari path tetap HARUS dicocokkan. Sebelumnya keberadaan
+        // segmen ketiga langsung menandai sesi terautentikasi tanpa validasi.
+        const passFromUrl = _getPassFromURL();
         if (passFromUrl === data.studioPassword) {
           try { sessionStorage.setItem(`loves_auth_${_token}`, 'true'); } catch (e) {}
+          _clearPassFromURL();
           _showStudio();
           return true;
         }
@@ -109,9 +112,6 @@ const Auth = (() => {
     if (path.length >= 2 && (path[0] === 'studio' || path[0] === 'free-studio')) {
       const token = path[1];
       if (token && !token.includes('.')) {
-        if (path.length >= 3) {
-          try { sessionStorage.setItem(`loves_auth_${token}`, 'true'); } catch (e) {}
-        }
         return token;
       }
     }
@@ -121,6 +121,27 @@ const Auth = (() => {
     if (params.get('id')) return params.get('id');
     if (params.get('to')) return params.get('to');
     return null;
+  }
+
+  function _getPassFromURL() {
+    const queryPass = new URLSearchParams(window.location.search).get('pass');
+    if (queryPass !== null) return queryPass;
+
+    const path = window.location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+    if (path.length >= 3 && (path[0] === 'studio' || path[0] === 'free-studio')) {
+      try { return decodeURIComponent(path.slice(2).join('/')); } catch (e) { return path.slice(2).join('/'); }
+    }
+    return null;
+  }
+
+  function _clearPassFromURL() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('pass');
+    const path = url.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+    if (path.length >= 3 && (path[0] === 'studio' || path[0] === 'free-studio')) {
+      url.pathname = `/${path[0]}/${path[1]}`;
+    }
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
   }
 
   return { init, getToken, getInitialConfig, getWorkerUrl };

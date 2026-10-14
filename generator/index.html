@@ -43,6 +43,7 @@
     <div class="flex items-center gap-2 mb-6 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto max-w-md">
       <button id="tab-create" class="flex-1 py-1.5 px-2 text-[8px] uppercase tracking-widest font-bold bg-[#fcfaf7] border border-[#d4a373]/20 text-[#b58756] rounded-lg shadow-sm transition-all pointer-events-none">Buat Baru</button>
       <button id="tab-rename" class="flex-1 py-1.5 px-2 text-[8px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all">Ganti Nama</button>
+      <button id="tab-reset" class="flex-1 py-1.5 px-2 text-[8px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all">Reset Pass</button>
       <button id="tab-qr" class="flex-1 py-1.5 px-2 text-[8px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all">QR Code</button>
     </div>
 
@@ -61,7 +62,7 @@
         <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">Password Studio <span class="text-gray-300 font-normal">(opsional)</span></label>
         <input id="gen-studio-pass" type="text" placeholder="Password untuk mengunci Studio Editor"
           class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
-        <p class="text-[8px] text-gray-400 mt-1.5">Kosongkan kalau tidak perlu password editor.</p>
+        <p class="text-[8px] text-gray-400 mt-1.5">Password untuk masuk Studio Editor. Jangan isi clue atau password gift penerima.</p>
       </div>
 
       <!-- Auto-generate ID -->
@@ -116,6 +117,33 @@
       </button>
 
       <p id="rename-error" class="hidden text-[9px] text-rose-500 text-center font-semibold"></p>
+    </div>
+
+    <!-- PANEL RESET STUDIO PASSWORD -->
+    <div id="panel-reset" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5 fade-in">
+      <div>
+        <p class="text-[9px] uppercase tracking-widest text-[#b58756] font-bold mb-2">Pemulihan Studio</p>
+        <p class="text-[10px] leading-relaxed text-gray-500">Reset ini hanya mengganti password Studio Editor. Password gift dan seluruh isi customer tetap aman.</p>
+      </div>
+
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">ID Gift</label>
+        <input id="reset-gift-id" type="text" placeholder="e.g. gift-1791945710594"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+      </div>
+
+      <div>
+        <label class="text-[9px] uppercase tracking-widest text-gray-400 font-semibold block mb-2">Password Studio Baru</label>
+        <input id="reset-studio-pass" type="password" autocomplete="new-password" placeholder="Minimal 4 karakter"
+          class="w-full border-b border-gray-200 py-2.5 text-sm focus:outline-none focus:border-gray-800 transition-colors bg-transparent placeholder-gray-300">
+        <p class="text-[8px] text-gray-400 mt-1.5">Simpan password ini dan kirim hanya kepada customer pemilik Studio.</p>
+      </div>
+
+      <button id="btn-reset-password" class="w-full bg-gray-900 text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-black transition-colors shadow-sm mt-2">
+        <span class="btn-text">Reset Password Studio →</span>
+      </button>
+
+      <p id="reset-error" class="hidden text-[9px] text-rose-500 text-center font-semibold"></p>
     </div>
 
     <!-- PANEL QR -->
@@ -230,14 +258,16 @@
     // ── Tab Navigation ───────────────────────────────────────────────
     const tabCreate = document.getElementById('tab-create');
     const tabRename = document.getElementById('tab-rename');
+    const tabReset = document.getElementById('tab-reset');
     const tabQr = document.getElementById('tab-qr');
     const panelCreate = document.getElementById('panel-create');
     const panelRename = document.getElementById('panel-rename');
+    const panelReset = document.getElementById('panel-reset');
     const panelQr = document.getElementById('panel-qr');
     const resultCard = document.getElementById('result-card');
 
     function setActiveTab(activeTabEl) {
-      [tabCreate, tabRename, tabQr].forEach(t => {
+      [tabCreate, tabRename, tabReset, tabQr].forEach(t => {
         t.className = 'flex-1 py-1.5 px-2 text-[8px] uppercase tracking-widest font-bold text-gray-400 hover:text-gray-900 rounded-lg transition-all';
         t.style.pointerEvents = 'auto';
       });
@@ -247,6 +277,7 @@
     tabCreate.addEventListener('click', () => {
       setActiveTab(tabCreate);
       panelRename.classList.add('hidden');
+      panelReset.classList.add('hidden');
       panelQr.classList.add('hidden');
       panelCreate.classList.remove('hidden');
       resultCard.classList.add('hidden');
@@ -255,8 +286,18 @@
     tabRename.addEventListener('click', () => {
       setActiveTab(tabRename);
       panelCreate.classList.add('hidden');
+      panelReset.classList.add('hidden');
       panelQr.classList.add('hidden');
       panelRename.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+    });
+
+    tabReset.addEventListener('click', () => {
+      setActiveTab(tabReset);
+      panelCreate.classList.add('hidden');
+      panelRename.classList.add('hidden');
+      panelQr.classList.add('hidden');
+      panelReset.classList.remove('hidden');
       resultCard.classList.add('hidden');
     });
 
@@ -264,6 +305,7 @@
       setActiveTab(tabQr);
       panelCreate.classList.add('hidden');
       panelRename.classList.add('hidden');
+      panelReset.classList.add('hidden');
       panelQr.classList.remove('hidden');
       resultCard.classList.add('hidden');
     });
@@ -391,6 +433,66 @@
       btn.disabled = false;
     });
 
+    // ── Reset Studio Password ────────────────────────────────────────
+    document.getElementById('btn-reset-password').addEventListener('click', async () => {
+      const idInput = document.getElementById('reset-gift-id');
+      const passInput = document.getElementById('reset-studio-pass');
+      const btn = document.getElementById('btn-reset-password');
+      const btnText = btn.querySelector('.btn-text');
+      const errEl = document.getElementById('reset-error');
+      const id = idInput.value.trim();
+      const studioPassword = passInput.value.trim();
+
+      if (!id || !studioPassword) {
+        errEl.textContent = 'ID gift dan password Studio baru wajib diisi.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      if (studioPassword.length < 4) {
+        errEl.textContent = 'Password Studio minimal 4 karakter.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      btnText.textContent = 'Mereset...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${WORKER_URL}/reset-studio-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${_authToken}`
+          },
+          body: JSON.stringify({ id, studioPassword })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('result-title').textContent = 'Password Studio Berhasil Direset!';
+          document.getElementById('result-id').textContent = data.id;
+          document.getElementById('result-studio').textContent = data.recoveryUrl || data.studioUrl;
+          document.getElementById('result-gift').textContent = data.giftUrl;
+          document.getElementById('result-card').classList.remove('hidden');
+          document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+          passInput.value = '';
+          navigator.clipboard.writeText(data.recoveryUrl || data.studioUrl).then(() => {
+            _showToast('Link pemulihan Studio tersalin otomatis!');
+          });
+        } else {
+          errEl.textContent = data.error || 'Gagal mereset password Studio.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Gagal terhubung ke server.';
+        errEl.classList.remove('hidden');
+      }
+
+      btnText.textContent = 'Reset Password Studio →';
+      btn.disabled = false;
+    });
+
     // ── Generate Another / Jump to QR ───────────────────────────────
     document.getElementById('btn-jump-to-qr').addEventListener('click', () => {
       const giftUrl = document.getElementById('result-gift').textContent;
@@ -405,6 +507,8 @@
       document.getElementById('gen-studio-pass').value = '';
       document.getElementById('rename-old-id').value = '';
       document.getElementById('rename-new-id').value = '';
+      document.getElementById('reset-gift-id').value = '';
+      document.getElementById('reset-studio-pass').value = '';
       document.getElementById('auto-gen-id').checked = false;
       document.getElementById('gen-id').disabled = false;
     });
