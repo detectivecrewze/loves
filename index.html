@@ -1019,6 +1019,8 @@
             line-height: 1.8;
             padding-left: 0.25rem;
             white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .letter-body p {
@@ -2825,16 +2827,25 @@
                         const htmlStr = letter.message || '<p>Surat ini untukmu ❤️</p>';
                         bodyEl.innerHTML = '';
                         let i = 0, isTag = false, currentHtml = '';
+                        const visibleLength = htmlStr.replace(/<[^>]*>/g, '').length;
+                        // Keep the typewriter effect without making long letters take
+                        // minutes to finish. Roughly 600 animation frames means even a
+                        // very long letter is fully visible in about ten seconds.
+                        const visibleCharsPerFrame = Math.max(1, Math.ceil(visibleLength / 600));
 
                         function type() {
                             if (i < htmlStr.length) {
-                                let char = htmlStr.charAt(i);
-                                currentHtml += char;
-                                if (char === '<') isTag = true;
-                                if (char === '>') isTag = false;
+                                let visibleCharsAdded = 0;
+                                while (i < htmlStr.length && visibleCharsAdded < visibleCharsPerFrame) {
+                                    const char = htmlStr.charAt(i);
+                                    currentHtml += char;
+                                    if (char === '<') isTag = true;
+                                    else if (char === '>') isTag = false;
+                                    else if (!isTag) visibleCharsAdded++;
+                                    i++;
+                                }
                                 bodyEl.innerHTML = currentHtml + (isTag ? '' : '<span style="border-right: 2px solid rgba(126,12,35,0.4); animation: blink 1s step-end infinite;">&nbsp;</span>');
-                                i++;
-                                setTimeout(type, isTag ? 0 : 35);
+                                window.setTimeout(type, 16);
                             } else {
                                 bodyEl.innerHTML = currentHtml;
                                 sigEl.style.transition = 'opacity 1.5s ease-in-out';
